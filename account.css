@@ -1,0 +1,108 @@
+.background-account {
+  position: absolute;
+  left: 50%;
+  top: 5%;
+  transform: translate(-50%, 50%);
+  background-color: rgb(117, 117, 117);
+  height: 260px;
+  width: 400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+}
+.background-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  z-index: -1;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.select-img {
+  border: none;
+  outline: none;
+  background-color: white;
+  font-size: 20px;
+  height: 100%;
+  width: 100%;
+  border-radius: 10px;
+}
+.img-main-account {
+  position: absolute;
+  left: 55%;
+  transform: translate(-50%, 50%);
+  top: 40%;
+  width: 100%;
+  display: grid;
+}
+.account-avatar {
+  width: 125px;
+  height: 125px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid white;
+}
+#welcomeaccount {
+}
+body.light-mode {
+  background-color: #f0f2f5 !important;
+  color: #000;
+}
+
+body.light-mode .background-account {
+  background-color: #fff !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+body.light-mode .account-avatar {
+  border: 2px solid #333;
+}
+
+body.light-mode .select-img {
+  background-color: #f9f9f9;
+  color: #000;
+}
+body.light-mode {
+  background-color: #f0f2f5 !important;
+  color: #000 !important;
+}
+
+/* Khối nền */
+body.light-mode .background-account {
+  background-color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Chữ trong nút */
+body.light-mode .select-img {
+  background-color: #f9f9f9 !important;
+  color: #111 !important;
+  border: 1px solid #ccc;
+}
+
+/* Avatar */
+body.light-mode .account-avatar {
+  border: 2px solid #333 !important;
+}
+
+/* Text chào */
+body.light-mode #welcomeaccount {
+  color: #000;
+}
+
+/* Nút logout */
+body.light-mode #logoutBtn {
+  background: #1877f2;
+  color: #fff;
+}
+
+/* Toggle button */
+body.light-mode #toggleThemeBtn {
+  background: #555;
+  color: #fff;
+}

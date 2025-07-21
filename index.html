@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Koobekaf</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/relativeTime.js"></script>
+  <script>dayjs.extend(dayjs_plugin_relativeTime)</script>
+  <link rel="icon" href="https://ik.imagekit.io/mprhlnakz/image-11.png">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+
+  <script>
+    // Kiểm tra đăng nhập trước khi hiển thị nội dung
+    const user = JSON.parse(localStorage.getItem("currentUser") || "{}");
+    if (!user.email) {
+      window.location.href = "login.html";
+    }
+    // Áp dụng theme đã lưu
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "light") {
+      document.body.classList.add("light-mode");
+    }
+  </script>
+
+  <button id="toggleThemeBtn" style="position: fixed; top: 20px; left: 20px; z-index: 1001; background: #4a90e2; color: #fff; border: none; border-radius: 8px; padding: 10px 18px; font-weight: 600; box-shadow: 0 2px 8px rgba(0,0,0,0.2); cursor: pointer;">
+    🌙 Chế độ tối
+  </button>
+
+  <script>
+    const toggleThemeBtn = document.getElementById("toggleThemeBtn");
+    const body = document.body;
+    // Đặt lại text nút khi load
+    function updateThemeBtn() {
+      if (body.classList.contains("light-mode")) {
+        toggleThemeBtn.innerText = "🌞 Chế độ sáng";
+      } else {
+        toggleThemeBtn.innerText = "🌙 Chế độ tối";
+      }
+    }
+    updateThemeBtn();
+    toggleThemeBtn.onclick = () => {
+      body.classList.toggle("light-mode");
+      const isLight = body.classList.contains("light-mode");
+      localStorage.setItem("theme", isLight ? "light" : "dark");
+      updateThemeBtn();
+    };
+    // Lắng nghe sự kiện thay đổi theme từ tab khác
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'theme') {
+        if (e.newValue === 'light') {
+          body.classList.add('light-mode');
+        } else {
+          body.classList.remove('light-mode');
+        }
+        updateThemeBtn();
+      }
+    });
+  </script>
+
+  <!-- HEADER Facebook style -->
+  <nav class="navbar navbar-dark bg-dark px-3 py-2" style="position:sticky;top:0;z-index:1100;">
+    <div class="container-fluid d-flex align-items-center justify-content-between">
+      <div class="d-flex align-items-center gap-2">
+        <a href="index.html" class="navbar-brand d-flex align-items-center" style="gap:6px;">
+          <img src="https://ik.imagekit.io/mprhlnakz/image-11.png" width="38" height="38" style="border-radius:10px;" alt="Koobekaf">
+          <span class="fw-bold fs-4 d-none d-md-inline" style="color:#fff;">Koobekaf</span>
+        </a>
+        <form class="d-none d-md-flex" role="search">
+          <input class="form-control form-control-sm bg-secondary text-white border-0" type="search" placeholder="Tìm kiếm trên Koobekaf" aria-label="Search" style="width:220px;">
+        </form>
+      </div>
+      <div class="d-flex align-items-center gap-3">
+        <a href="#" class="text-white fs-5"><i class="bi bi-house-door-fill"></i></a>
+        <a href="#" class="text-white fs-5"><i class="bi bi-tv"></i></a>
+        <a href="#" class="text-white fs-5"><i class="bi bi-people-fill"></i></a>
+        <a href="#" class="text-white fs-5"><i class="bi bi-controller"></i></a>
+      </div>
+      <div class="d-flex align-items-center gap-2">
+        <button id="notificationBtn" style="display: none;">
+    
+          
+        </button>
+        <a href="account.html" class="d-flex align-items-center text-white text-decoration-none">
+          <img id="userAvatar" src="https://i.pravatar.cc/100" alt="avatar" class="avt me-2">
+          <input type="file" id="changeAvatarInput" accept="image/*" style="display: none;">
+          <span id="welcomeText" class="fw-semibold"></span>
+        </a>
+      </div>
+    </div>
+    <div id="notificationList" class="card shadow p-2 position-absolute end-0 mt-2" style="width: 250px; max-height: 300px; overflow-y: auto; display: none; z-index: 999;"></div>
+  </nav>
+
+  <div class="container-fluid" style="background:#18191a;min-height:100vh;">
+    <div class="row" style="padding-top:24px;">
+      <!-- SIDEBAR LEFT -->
+      <aside class="col-12 col-md-3 col-lg-2 d-none d-md-block" style="color:#fff;min-height:100vh;">
+        <div class="d-flex flex-column gap-2 ps-2 pe-4">
+          <div class="d-flex align-items-center gap-2 mb-2">
+        
+          </div>
+          </div>
+       
+        <div class="ps-2">
+         
+      </aside>
+
+      <!-- MAIN FEED -->
+      <main class="col-12 col-md-6 col-lg-7 px-0 px-md-3">
+        <div class="container py-4">
+          
+          <form id="postForm" class="mb-4">
+      <textarea id="postContent" class="form-control mb-2" placeholder="Bạn đang nghĩ gì?" required rows="3"></textarea>
+      <div class="d-flex align-items-center gap-2 mb-2">
+        <label class="btn btn-outline-primary btn-sm mb-0" for="postImageInput">🖼️ Ảnh</label>
+        <input type="file" id="postImageInput" accept="image/*" class="form-control form-control-sm d-none">
+        <img id="postPreview" class="img-fluid mb-2 d-none" style="max-height: 300px; border-radius:12px;box-shadow:0 1px 4px #0004;" />
+      </div>
+      <button type="submit" class="btn btn-primary">Đăng bài</button>
+          </form>
+          <div id="postList"></div>
+        </div>
+      </main>
+
+
+      
+
+  <!-- Chat Box giữ nguyên -->
+  <div class="chat-box" id="chatContainer">
+    <div class="chat-box-header">💬 Box Chat Chung</div>
+    <div class="chat-box-body" id="chatBox"></div>
+    <div class="chat-box-footer">
+      <input style="display: none;" type="file" id="chatImageInput" accept="image/*" class="form-control mb-2">
+      <div class="d-flex">
+        <input type="text" id="chatInput" class="form-control me-2" placeholder="Nhập tin nhắn...">
+        <button class="btn btn-primary" id="sendBtn">Gửi</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chat Box -->
+  <div class="chat-box" id="chatContainer">
+    <div class="chat-box-header">💬 Box Chat Chung</div>
+    <div class="chat-box-body" id="chatBox"></div>
+    <div class="chat-box-footer">
+      <input style="display: none;" type="file" id="chatImageInput" accept="image/*" class="form-control mb-2">
+      <div class="d-flex">
+        <input type="text" id="chatInput" class="form-control me-2" placeholder="Nhập tin nhắn...">
+        <button class="btn btn-primary" id="sendBtn">Gửi</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="chat-toggle-btn" id="toggleChatBtn">
+    <svg xmlns="http://www.w3.org/2000/svg" height="32" width="32" viewBox="0 0 24 24" fill="white">
+      <path d="M20 2H4C2.89 2 2 2.89 2 4v16l4-4h14c1.1 0 2-.9 2-2V4c0-1.11-.9-2-2-2zm0 12H5.17L4 17.17V4h16v10z"/>
+    </svg>
+  </div>
+
+
+  <script type="module">
+   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
+  import {
+    getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp,
+    doc, updateDoc, deleteDoc, getDoc, limit, getDocs, getCountFromServer, 
+  } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
+  import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-storage.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyB1hj75YSToaR_RliGxoPAFyGXZVpFqTm4",
+  authDomain: "we-are-always-here.firebaseapp.com",
+  projectId: "we-are-always-here",
+  storageBucket: "we-are-always-here.firebasestorage.app",
+  messagingSenderId: "976166105043",
+  appId: "1:976166105043:web:1ea3a17025c4df62148926",
+  measurementId: "G-R8VN95690J"
+};
+const notifiedCommentIds = new Set();
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const storage = getStorage(app);
+
+  // Đảm bảo chỉ khởi tạo currentUser 1 lần duy nhất
+  let rawUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
+  let currentUser = {
+    email: rawUser.email || "khách",
+    username: rawUser.username || "Ẩn danh",
+    avatar: rawUser.avatar || "https://i.pravatar.cc/100?u=default"
+  };
+
+
+  // Chuông thông báo
+  const notificationBtn = document.getElementById("notificationBtn");
+  const notificationList = document.getElementById("notificationList");
+  const notificationCount = document.getElementById("notificationCount");
+  let notifications = [];
+
+  notificationBtn.addEventListener("click", () => {
+    const visible = notificationList.style.display === "block";
+    notificationList.style.display = visible ? "none" : "block";
+    notificationCount.style.display = "none";
+    notificationCount.innerText = "0";
+  });
+
+ function showCommentNotification(postId, commenter, content) {
+  const truncated = content.length > 30 ? content.slice(0, 30) + "..." : content;
+  const id = Date.now() + Math.random().toString(36).substring(2, 8); // id ngẫu nhiên
+  const msg = {
+    id,
+    html: `<a href="post.html?id=${postId}" class="text-decoration-none text-dark notification-link" data-id="${id}">
+      💬 <strong>${commenter}</strong> đã bình luận bài viết: <em>"${truncated}"</em>
+    </a>`
+  };
+  notifications.push(msg);
+  renderNotifications();
+}
+function renderNotifications() {
+  notificationList.innerHTML = notifications.map(n =>
+    `<div class="border-bottom py-1">${n.html}</div>`).join("");
+  notificationCount.innerText = notifications.length;
+  notificationCount.style.display = notifications.length ? "inline-block" : "none";
+
+  // Gắn sự kiện khi click vào từng thông báo
+  const links = document.querySelectorAll(".notification-link");
+  links.forEach(link => {
+    link.addEventListener("click", (e) => {
+      const id = link.dataset.id;
+      // Xóa thông báo đã click
+      notifications = notifications.filter(n => n.id !== id);
+      renderNotifications(); // Cập nhật lại
+    });
+  });
+}
+
+
+
+
+  // Chat toggle
+  const toggleChatBtn = document.getElementById("toggleChatBtn");
+  const chatContainer = document.getElementById("chatContainer");
+  toggleChatBtn.onclick = () => {
+    chatContainer.style.display = chatContainer.style.display === "none" || chatContainer.style.display === "" ? "flex" : "none";
+  };
+
+  const chatBox = document.getElementById("chatBox");
+  const chatInput = document.getElementById("chatInput");
+  const sendBtn = document.getElementById("sendBtn");
+  sendBtn.onclick = async () => {
+    const msg = chatInput.value.trim();
+    if (!msg) return;
+    await addDoc(collection(db, "globalChat"), {
+      user: currentUser.email,
+      avatar: currentUser.avatar,
+      text: msg,
+      createdAt: serverTimestamp()
+    });
+    chatInput.value = "";
+  };
+
+  document.getElementById("chatImageInput").addEventListener("change", async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const imageRef = ref(storage, `chatImages/${Date.now()}-${file.name}`);
+    await uploadBytes(imageRef, file);
+    const imageUrl = await getDownloadURL(imageRef);
+    await addDoc(collection(db, "globalChat"), {
+      user: currentUser.email,
+      avatar: currentUser.avatar,
+      text: "",
+      imageUrl,
+      createdAt: serverTimestamp()
+    });
+  });
+
+  const chatQuery = query(collection(db, "globalChat"), orderBy("createdAt", "asc"));
+  onSnapshot(chatQuery, (snapshot) => {
+    chatBox.innerHTML = "";
+    snapshot.forEach((doc) => {
+      const m = doc.data();
+      const isMe = m.user === currentUser.email;
+      const div = document.createElement("div");
+      div.className = "chat-message" + (isMe ? " me" : "");
+      if (isMe) {
+        // Tin nhắn của mình: avatar phải, không hiện tên
+        div.innerHTML = `
+          <img src="${m.avatar}" class="avatar me-2">
+          <div style="display: flex; flex-direction: column; align-items: flex-end;">
+            <div class="bubble me">${m.text || ""}${m.imageUrl ? `<br><img src='${m.imageUrl}'/>` : ""}</div>
+            <div class="meta">${m.createdAt ? dayjs(m.createdAt.toDate()).format('HH:mm') : ""}</div>
+          </div>
+        `;
+      } else {
+        // Tin nhắn người khác: avatar trái, hiện tên
+        div.innerHTML = `
+          <img src="${m.avatar}" class="avatar me-2">
+          <div style="display: flex; flex-direction: column; align-items: flex-start;">
+            <div style="font-size:0.95em;color:#b0b8c1;font-weight:500;margin-bottom:2px;">${m.user || "Ẩn danh"}</div>
+            <div class="bubble">${m.text || ""}${m.imageUrl ? `<br><img src='${m.imageUrl}'/>` : ""}</div>
+            <div class="meta">${m.createdAt ? dayjs(m.createdAt.toDate()).format('HH:mm') : ""}</div>
+          </div>
+        `;
+      }
+      chatBox.appendChild(div);
+    });
+    chatBox.scrollTop = chatBox.scrollHeight;
+  });
+
+  const postForm = document.getElementById("postForm");
+  const postList = document.getElementById("postList");
+  // postForm.addEventListener("submit", async (e) => {
+  //   e.preventDefault();
+  //   const content = postForm.postContent.value.trim();
+  //   if (!content) return alert("Nội dung không được trống!");
+  //   await addDoc(collection(db, "posts"), {
+  //     author: currentUser.email,
+  //     avatar: currentUser.avatar,
+  //     content: content,
+  //     createdAt: serverTimestamp()
+  //   });
+  //   postForm.reset();
+  // });
+
+  const postQuery = query(collection(db, "posts"), orderBy("createdAt", "desc"));
+  onSnapshot(postQuery, (snapshot) => {
+    postList.innerHTML = "";
+    snapshot.forEach((docSnap) => {
+      const p = docSnap.data();
+      const id = docSnap.id;
+      const liked = (p.likes || []).includes(currentUser.email);
+      const likeCount = (p.likes || []).length;
+      const commentCount = p.commentCount || 0;
+      const shareCount = p.shareCount || 0;
+      const isAuthor = p.author === currentUser.email;
+      const div = document.createElement("div");
+      div.className = "fb-post";
+      div.innerHTML = `
+        <div class="fb-header position-relative d-flex align-items-center" style="padding-bottom:2px;">
+          <img src="${p.avatar || 'https://i.pravatar.cc/100'}" class="fb-avatar me-2" style="box-shadow:0 1px 4px #0002;">
+          <div class="fb-info flex-grow-1">
+            <div style="font-weight:600;font-size:1.05em;color:#fff;">${p.author || 'Ẩn danh'}</div>
+            <div class="fb-time text-secondary" style="font-size:0.95em;">${p.createdAt ? dayjs(p.createdAt.toDate()).fromNow() : ""}</div>
+          </div>
+          ${isAuthor ? `<div class='dropdown post-actions' style='position:relative;z-index:2;'>
+            <button class='btn btn-sm btn-outline-secondary rounded-circle dropdown-toggle' data-bs-toggle='dropdown' aria-expanded='false' style='font-size:1.2em;padding:2px 8px;'>
+              <i class='bi bi-three-dots-vertical'></i>
+            </button>
+            <ul class='dropdown-menu dropdown-menu-end shadow-sm' style='min-width:120px;'>
+              <li><a class='dropdown-item' href='#' onclick='showEditModal("${id}", "${encodeURIComponent(p.content || "")}")'><i class="bi bi-pencil-square me-2"></i>Chỉnh sửa</a></li>
+              <li><a class='dropdown-item text-danger' href='#' onclick='deletePost("${id}")'><i class="bi bi-trash3 me-2"></i>Xóa</a></li>
+            </ul>
+          </div>` : ""}
+        </div>
+        <div class="fb-caption px-1 pb-1" id="content-${id}" style="color:#e4e6eb;font-size:1.08em;">${p.content || ""}</div>
+        ${p.imageUrl ? `<img src="${p.imageUrl}" class="fb-img mb-2" alt="post image" style="border-radius:12px;box-shadow:0 1px 8px #0003;max-height:400px;object-fit:cover;width:100%;">` : ""}
+        <div class="fb-stats mt-2 mb-1 px-1" style="display:flex;align-items:center;gap:16px;font-size:0.98em;color:#b0b8c1;">
+          <span><i class="bi bi-emoji-smile"></i> ${likeCount}</span>
+          <span>· ${commentCount} bình luận</span>
+          <span>· ${shareCount} lượt chia sẻ</span>
+        </div>
+        <div class="fb-actions d-flex gap-2 px-1 pb-1" style="border-top:1px solid #393a3b;padding-top:8px;">
+          <button class="fb-action-btn btn btn-sm btn-outline-primary px-3" onclick="toggleLike('${id}')"><i class="bi bi-hand-thumbs-up${liked ? '-fill text-primary' : ''}"></i> Thích</button>
+          <button class="fb-action-btn btn btn-sm btn-outline-secondary px-3" onclick="document.getElementById('comment-input-${id}').focus()"><i class="bi bi-chat-left"></i> Bình luận</button>
+          <button class="fb-action-btn btn btn-sm btn-outline-secondary px-3"><i class="bi bi-share"></i> Chia sẻ</button>
+        </div>
+        <div class="mt-2 px-1">
+          <input class="form-control form-control-sm mb-2" id="comment-input-${id}" placeholder="Viết bình luận..." onkeydown="if(event.key==='Enter') addComment('${id}', this)">
+          <div id="comments-${id}"></div>
+        </div>
+      `;
+// Modal chỉnh sửa bài viết
+const editModalHtml = `
+<div class="modal fade" id="editPostModalKoobekaf" tabindex="-1" aria-labelledby="editPostModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content bg-dark text-light">
+      <div class="modal-header border-0">
+        <h5 class="modal-title" id="editPostModalLabel"><i class="bi bi-pencil-square me-2"></i>Chỉnh sửa bài viết</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <textarea id="editPostContent" class="form-control" rows="4"></textarea>
+      </div>
+      <div class="modal-footer border-0">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+        <button type="button" class="btn btn-primary" id="saveEditPostBtn"><i class="bi bi-check2"></i> Lưu</button>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+if (!document.getElementById('editPostModalKoobekaf')) {
+  document.body.insertAdjacentHTML('beforeend', editModalHtml);
+}
+
+window.showEditModal = function(postId, content) {
+  const modal = document.getElementById('editPostModalKoobekaf');
+  const textarea = modal.querySelector('#editPostContent');
+  textarea.value = decodeURIComponent(content || "");
+  // Lưu id vào modal để dùng khi lưu
+  modal.setAttribute('data-post-id', postId);
+  // Hiện modal
+  const bsModal = new bootstrap.Modal(modal);
+  bsModal.show();
+};
+
+document.getElementById('editPostModalKoobekaf').addEventListener('shown.bs.modal', function() {
+  document.getElementById('editPostContent').focus();
+});
+
+document.getElementById('saveEditPostBtn').onclick = async function() {
+  const modal = document.getElementById('editPostModalKoobekaf');
+  const postId = modal.getAttribute('data-post-id');
+  const newContent = document.getElementById('editPostContent').value.trim();
+  if (!newContent) return alert('Nội dung không được để trống!');
+  const ref = doc(db, 'posts', postId);
+  await updateDoc(ref, { content: newContent });
+  const bsModal = bootstrap.Modal.getInstance(modal);
+  bsModal.hide();
+};
+  // CSS nâng cấp giao diện Koobekaf
+  const style = document.createElement('style');
+  style.innerHTML = `
+    .fb-post { background: #242526; border-radius: 12px; box-shadow: 0 2px 8px #0002; margin-bottom: 24px; padding: 16px 12px 8px 12px; transition: box-shadow .2s; }
+    .fb-post:hover { box-shadow: 0 4px 16px #0004; }
+    .fb-header { min-height: 48px; }
+    .fb-avatar { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; }
+    .fb-info { line-height: 1.1; }
+    .fb-caption { margin-top: 2px; margin-bottom: 6px; }
+    .fb-img { margin-top: 6px; margin-bottom: 6px; border-radius: 12px; max-width: 100%; }
+    .fb-actions .fb-action-btn { border-radius: 8px; transition: background .15s, color .15s; }
+    .fb-actions .fb-action-btn:hover { background: #3a3b3c; color: #fff; }
+    .post-actions .dropdown-toggle { border: none; background: none; color: #b0b8c1; }
+    .post-actions .dropdown-toggle:focus { outline: none; box-shadow: none; }
+    .dropdown-menu { font-size: 1em; }
+    .dropdown-item:active, .dropdown-item:focus { background: #3a3b3c; color: #fff; }
+    .dropdown-item.text-danger:active { background: #ffdddd; color: #d00; }
+    .modal-content.bg-dark { background: #242526 !important; color: #e4e6eb; }
+    .modal-header, .modal-footer { border: none; }
+    .modal-title { color: #fff; }
+    .btn-close-white { filter: invert(1); }
+  `;
+  document.head.appendChild(style);
+      postList.appendChild(div);
+      loadComments(id, p.author, p.content);
+    });
+  });
+
+  window.editPost = async (id) => {
+    const ref = doc(db, "posts", id);
+    const snap = await getDoc(ref);
+    const oldContent = snap.data()?.content || "";
+    const newContent = prompt("Nội dung mới:", oldContent);
+    if (newContent && newContent !== oldContent) {
+      await updateDoc(ref, { content: newContent });
+    }
+  };
+
+  window.deletePost = async (id) => {
+    if (confirm("Xác nhận xóa bài viết?")) {
+      await deleteDoc(doc(db, "posts", id));
+    }
+  };
+
+  window.addComment = async (postId, input) => {
+    const text = input.value.trim();
+    if (!text) return;
+    await addDoc(collection(db, "posts", postId, "comments"), {
+      author: currentUser.email,
+      avatar: currentUser.avatar,
+      content: text,
+      createdAt: serverTimestamp()
+    });
+    input.value = "";
+  };
+
+  async function loadComments(postId, postAuthor, postContent) {
+  const div = document.getElementById(`comments-${postId}`);
+  if (!div) return;
+
+  const q = query(
+    collection(db, "posts", postId, "comments"),
+    orderBy("createdAt", "desc"),
+    limit(5)
+  );
+
+  // Lắng nghe realtime chỉ 5 bình luận mới nhất
+  onSnapshot(q, (snap) => {
+    div.innerHTML = "";
+    
+    snap.forEach((docSnap) => {
+      const c = docSnap.data();
+      const cid = docSnap.id;
+
+      // Gửi thông báo nếu là người khác bình luận vào bài của mình
+      if (
+        postAuthor === currentUser.email &&
+        c.author !== currentUser.email &&
+        !notifiedCommentIds.has(cid)
+      ) {
+        showCommentNotification(postId, c.author, postContent);
+        notifiedCommentIds.add(cid);
+      }
+
+      const el = document.createElement("div");
+      el.className = "border rounded p-1 mb-1";
+      const liked = (c.likes || []).includes(currentUser.email);
+
+      el.innerHTML = `
+        <div class="d-flex align-items-center mb-1">
+          <img src="${c.avatar}" class="avatar me-2">
+          <strong>${c.author}</strong>
+          <small class="text-muted ms-2">${c.createdAt ? dayjs(c.createdAt.toDate()).fromNow() : ""}</small>
+        </div>
+        <div>${c.content}</div>
+        <div class="d-flex align-items-center gap-2 my-1">
+          <button class="btn btn-sm ${liked ? 'btn-danger' : 'btn-outline-danger'}"
+            onclick="toggleCommentLike('${postId}', '${cid}')">
+            ❤️ (${(c.likes || []).length})
+          </button>
+          <button class="btn btn-sm btn-outline-primary" onclick="showReplyInput('${postId}', '${cid}')">↩️ Phản hồi</button>
+        </div>
+        <div id="reply-box-${cid}" style="margin-left: 2rem;"></div>
+      `;
+
+      div.appendChild(el);
+      loadReplies(postId, cid, el, c.author, postContent);
+// Hiển thị ô nhập phản hồi cho bình luận
+window.showReplyInput = function(postId, commentId) {
+  const box = document.getElementById(`reply-box-${commentId}`);
+  if (!box) return;
+  // Nếu đã có input thì không thêm nữa
+  if (box.querySelector('input')) return;
+  box.innerHTML = `
+    <input class="form-control mb-1" placeholder="Nhập phản hồi..." id="reply-input-${commentId}" />
+    <button class="btn btn-sm btn-primary" onclick="addReply('${postId}', '${commentId}')">Gửi</button>
+  `;
+  // Tự động focus vào input
+  setTimeout(() => {
+    const inp = document.getElementById(`reply-input-${commentId}`);
+    if (inp) inp.focus();
+  }, 100);
+};
+
+// Thêm phản hồi vào Firestore
+window.addReply = async function(postId, commentId) {
+  const inp = document.getElementById(`reply-input-${commentId}`);
+  if (!inp) return;
+  const text = inp.value.trim();
+  if (!text) return;
+  const rawUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
+  await addDoc(collection(db, "posts", postId, "comments", commentId, "replies"), {
+    author: rawUser.email || "khách",
+    avatar: rawUser.avatar || "https://i.pravatar.cc/100",
+    content: text,
+    createdAt: serverTimestamp()
+  });
+  inp.value = "";
+  // Ẩn ô nhập sau khi gửi
+  inp.parentElement.innerHTML = "";
+};
+    });
+
+    // ✅ Hiện nút "Xem thêm"
+    // ✅ Hiện nút "Xem thêm (x)" với tổng số bình luận
+if (!document.getElementById(`more-comments-${postId}`)) {
+  const moreBtn = document.createElement("button");
+  moreBtn.className = "btn btn-sm btn-link";
+  moreBtn.id = `more-comments-${postId}`;
+  moreBtn.onclick = () => window.location.href = `post.html?id=${postId}`;
+  div.appendChild(moreBtn);
+
+  // Lấy tổng số bình luận để hiển thị
+  const totalQuery = collection(db, "posts", postId, "comments");
+  getCountFromServer(totalQuery).then((res) => {
+    const total = res.data().count;
+    moreBtn.textContent = `Xem thêm (${total})`;
+  });
+}
+
+  });
+}
+
+async function loadReplies(postId, commentId, parentElement, commentAuthor, postContent) {
+  const div = document.createElement("div");
+  div.style.marginLeft = "2rem";
+
+  const q = query(
+    collection(db, "posts", postId, "comments", commentId, "replies"),
+    orderBy("createdAt", "desc") // 👈 Mới nhất lên trên
+    
+  );
+
+  onSnapshot(q, (snap) => {
+    div.innerHTML = "";
+
+    snap.forEach((docSnap) => {
+      const r = docSnap.data();
+
+      // Gửi thông báo nếu người khác phản hồi vào bình luận của bạn
+      if (commentAuthor === currentUser.email && r.author !== currentUser.email) {
+        const truncated = (postContent || "").slice(0, 30) + "...";
+        const msg = `<a href="post.html?id=${postId}" class="text-decoration-none text-dark">
+          ↩️ <strong>${r.author}</strong> đã phản hồi bình luận của bạn trong bài viết: <em>"${truncated}"</em>
+        </a>`;
+        notifications.push(msg);
+        notificationCount.innerText = notifications.length;
+        notificationCount.style.display = "inline-block";
+        notificationList.innerHTML = notifications.map(n => `<div class="border-bottom py-1">${n}</div>`).join("");
+      }
+
+      const reply = document.createElement("div");
+      reply.className = "border rounded p-1 mb-1 bg-light";
+      const liked = (r.likes || []).includes(currentUser.email);
+
+      reply.innerHTML = `
+        <div class="d-flex align-items-center mb-1">
+          <img src="${r.avatar}" class="avatar me-2">
+          <strong>${r.author}</strong>
+          <small class="text-muted ms-2">${r.createdAt ? dayjs(r.createdAt.toDate()).fromNow() : ""}</small>
+        </div>
+        <div>${r.content}</div>
+        <div class="d-flex gap-2 my-1">
+          <button class="btn btn-sm ${liked ? 'btn-danger' : 'btn-outline-danger'}"
+            onclick="toggleReplyLike('${postId}', '${commentId}', '${docSnap.id}')">
+            ❤️ (${(r.likes || []).length})
+          </button>
+        </div>
+      `;
+
+      div.appendChild(reply);
+    });
+  });
+
+  parentElement.appendChild(div);
+}
+
+
+  if (!currentUser || !currentUser.email) {
+      window.location.href = "login.html";
+    } else {
+      document.getElementById("welcomeText").innerText = ` ${currentUser.email}`;
+      if (currentUser.avatar) {
+        userAvatar.src = currentUser.avatar;
+      }
+    }
+    // Đổi avatar
+  document.getElementById("changeAvatarInput").addEventListener("change", async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const cloudUrl = await uploadToCloudinary(file); // ✅ gọi Cloudinary
+
+  currentUser.avatar = cloudUrl;
+  localStorage.setItem("currentUser", JSON.stringify(currentUser));
+  document.getElementById("userAvatar").src = cloudUrl;
+
+  alert("Đã cập nhật ảnh đại diện thành công!");
+});
+
+
+    // Đăng bài viết kèm ảnh
+    document.getElementById("postForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const content = document.getElementById("postContent").value.trim();
+      const file = document.getElementById("postImageInput").files[0];
+      let imageUrl = "";
+      if (file) {
+        // Upload ảnh lên Cloudinary thay vì Firebase Storage
+        imageUrl = await uploadToCloudinary(file);
+      }
+      await addDoc(collection(db, "posts"), {
+        author: currentUser.email || "khách",
+        avatar: currentUser.avatar || "https://i.pravatar.cc/100",
+        content,
+        imageUrl,
+        likes: [],
+        commentCount: 0,
+        shareCount: 0,
+        createdAt: serverTimestamp()
+      });
+      document.getElementById("postForm").reset();
+      document.getElementById("postPreview").src = "";
+      document.getElementById("postPreview").classList.add("d-none");
+    });
+     const postImageInput = document.getElementById("postImageInput");
+    const postPreview = document.getElementById("postPreview");
+    
+
+    postImageInput.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          postPreview.src = reader.result;
+          postPreview.classList.remove("d-none");
+        };
+        reader.readAsDataURL(file);
+      } else {
+        postPreview.src = "";
+        postPreview.classList.add("d-none");
+      }
+    });
+
+    postForm.addEventListener("submit", () => {
+      postPreview.src = "";
+      postPreview.classList.add("d-none");
+    });
+    window.toggleLike = async function(postId) {
+  const postRef = doc(db, "posts", postId);
+  const snap = await getDoc(postRef);
+  const data = snap.data();
+  let likes = data.likes || [];
+
+  const index = likes.indexOf(currentUser.email);
+  if (index >= 0) {
+    likes.splice(index, 1); // Unlike
+  } else {
+    likes.push(currentUser.email); // Like
+  }
+
+  await updateDoc(postRef, { likes });
+};
+window.toggleLike = async function(postId) {
+  const postRef = doc(db, "posts", postId);
+  const snap = await getDoc(postRef);
+  const data = snap.data();
+  let likes = data.likes || [];
+
+  const index = likes.indexOf(currentUser.email); // kiểm tra xem người dùng đã like chưa
+
+  if (index >= 0) {
+    likes.splice(index, 1); // Nếu đã like rồi => bỏ like (unlike)
+  } else {
+    likes.push(currentUser.email); // Nếu chưa like => thêm vào danh sách like
+  }
+
+  await updateDoc(postRef, { likes }); // cập nhật lại trường likes
+};
+window.toggleCommentLike = async function(postId, commentId) {
+  const commentRef = doc(db, "posts", postId, "comments", commentId);
+  const snap = await getDoc(commentRef);
+  const data = snap.data();
+  let likes = data.likes || [];
+
+  const i = likes.indexOf(currentUser.email);
+  if (i >= 0) likes.splice(i, 1);
+  else likes.push(currentUser.email);
+
+  await updateDoc(commentRef, { likes });
+};
+window.toggleReplyLike = async function(postId, commentId, replyId) {
+  const ref = doc(db, "posts", postId, "comments", commentId, "replies", replyId);
+  const snap = await getDoc(ref);
+  const data = snap.data();
+  let likes = data.likes || [];
+
+  const i = likes.indexOf(currentUser.email);
+  if (i >= 0) likes.splice(i, 1);
+  else likes.push(currentUser.email);
+
+  await updateDoc(ref, { likes });
+};
+async function uploadToCloudinary(file) {
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("upload_preset", "NguyenDuEducation"); // 👈 Đúng key preset Cloudinary
+
+  const res = await fetch("https://api.cloudinary.com/v1_1/NguyenDuEducation/image/upload", {
+    method: "POST",
+    body: formData
+  });
+
+  const data = await res.json();
+  return data.secure_url;
+}
+</script>
+</body>
+</html>
