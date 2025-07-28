@@ -445,7 +445,7 @@ body {
       transform: scale(1.08);
     }
     .container {
-      background: #fff;
+      background: #494a4c;
       border-radius: 16px;
       box-shadow: 0 2px 12px rgba(24,119,242,0.07);
       margin-top: 32px;
@@ -666,4 +666,32 @@ body.light-mode #logoutBtn {
 body.light-mode #toggleThemeBtn {
   background: #555;
   color: #fff;
+}
+
+/* Ẩn form đăng bài */
+#postForm {
+  display: none;
+}
+
+/* Hiển thị form đăng bài khi bấm nút */
+#postForm.active {
+  display: block;
+}
+
+/* Form đăng bài dạng nổi */
+#postForm {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #23272f;
+  color: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  z-index: 1001;
+}
+#postForm.active {
+  display: block;
 }

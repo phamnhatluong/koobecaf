@@ -10,6 +10,7 @@
   <script>dayjs.extend(dayjs_plugin_relativeTime)</script>
   <link rel="icon" href="https://ik.imagekit.io/mprhlnakz/image-11.png">
   <link rel="stylesheet" href="style.css" />
+<script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
 </head>
 <body>
 
@@ -70,9 +71,7 @@
           <img src="https://ik.imagekit.io/mprhlnakz/image-11.png" width="38" height="38" style="border-radius:10px;" alt="Koobekaf">
           <span class="fw-bold fs-4 d-none d-md-inline" style="color:#fff;">Koobekaf</span>
         </a>
-        <form class="d-none d-md-flex" role="search">
-          <input class="form-control form-control-sm bg-secondary text-white border-0" type="search" placeholder="Tìm kiếm trên Koobekaf" aria-label="Search" style="width:220px;">
-        </form>
+       
       </div>
       <div class="d-flex align-items-center gap-3">
         <a href="#" class="text-white fs-5"><i class="bi bi-house-door-fill"></i></a>
@@ -113,15 +112,21 @@
       <main class="col-12 col-md-6 col-lg-7 px-0 px-md-3">
         <div class="container py-4">
           
-          <form id="postForm" class="mb-4">
-      <textarea id="postContent" class="form-control mb-2" placeholder="Bạn đang nghĩ gì?" required rows="3"></textarea>
-      <div class="d-flex align-items-center gap-2 mb-2">
-        <label class="btn btn-outline-primary btn-sm mb-0" for="postImageInput">🖼️ Ảnh</label>
-        <input type="file" id="postImageInput" accept="image/*" class="form-control form-control-sm d-none">
-        <img id="postPreview" class="img-fluid mb-2 d-none" style="max-height: 300px; border-radius:12px;box-shadow:0 1px 4px #0004;" />
-      </div>
-      <button type="submit" class="btn btn-primary">Đăng bài</button>
-          </form>
+          <!-- Nâng cấp form đăng bài với thiết kế đẹp hơn -->
+<form id="postForm" class="mb-4" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: linear-gradient(135deg, #23272f 60%, #18191a 100%); color: #fff; border-radius: 16px; padding: 20px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5); z-index: 1001; width: 90%; max-width: 500px;">
+  <h5 class="text-center mb-3" style="font-weight: 600; color: #a259ff;">Tạo bài viết mới</h5>
+  <textarea id="postContent" class="form-control mb-3" placeholder="Bạn đang nghĩ gì?" required rows="4" style="border-radius: 12px; border: 1.5px solid #393e4b; background: #23272f; color: #fff; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);"></textarea>
+  <div class="d-flex align-items-center gap-2 mb-3">
+    <label class="btn btn-outline-primary btn-sm mb-0" for="postImageInput" style="border-radius: 12px;">🖼️ Thêm ảnh</label>
+    <input type="file" id="postImageInput" accept="image/*" class="form-control form-control-sm d-none">
+    <img id="postPreview" class="img-fluid mb-2 d-none" style="max-height: 300px; border-radius:12px;box-shadow:0 2px 8px rgba(0, 0, 0, 0.3);" />
+  </div>
+  <div class="d-flex justify-content-end gap-3">
+    <button type="button" class="btn btn-secondary" id="cancelPost" style="border-radius: 12px; padding: 8px 16px;">Hủy</button>
+    <button type="submit" class="btn btn-primary" style="background: linear-gradient(135deg, #a259ff 60%, #6a5cff 100%); border: none; color: #fff; border-radius: 12px; padding: 8px 16px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);">Đăng bài</button>
+  </div>
+</form>
+
           <div id="postList"></div>
         </div>
       </main>
@@ -356,15 +361,18 @@ function renderNotifications() {
         </div>
         <div class="fb-caption px-1 pb-1" id="content-${id}" style="color:#e4e6eb;font-size:1.08em;">${p.content || ""}</div>
         ${p.imageUrl ? `<img src="${p.imageUrl}" class="fb-img mb-2" alt="post image" style="border-radius:12px;box-shadow:0 1px 8px #0003;max-height:400px;object-fit:cover;width:100%;">` : ""}
+        <!-- Hiển thị số lượng bình luận -->
         <div class="fb-stats mt-2 mb-1 px-1" style="display:flex;align-items:center;gap:16px;font-size:0.98em;color:#b0b8c1;">
-          <span><i class="bi bi-emoji-smile"></i> ${likeCount}</span>
-          <span>· ${commentCount} bình luận</span>
-          <span>· ${shareCount} lượt chia sẻ</span>
+          <span><i class='far fa-thumbs-up'></i> </span>
+
         </div>
-        <div class="fb-actions d-flex gap-2 px-1 pb-1" style="border-top:1px solid #393a3b;padding-top:8px;">
-          <button class="fb-action-btn btn btn-sm btn-outline-primary px-3" onclick="toggleLike('${id}')"><i class="bi bi-hand-thumbs-up${liked ? '-fill text-primary' : ''}"></i> Thích</button>
-          <button class="fb-action-btn btn btn-sm btn-outline-secondary px-3" onclick="document.getElementById('comment-input-${id}').focus()"><i class="bi bi-chat-left"></i> Bình luận</button>
-          <button class="fb-action-btn btn btn-sm btn-outline-secondary px-3"><i class="bi bi-share"></i> Chia sẻ</button>
+        <div class="d-flex align-items-center gap-2">
+          <button class="fb-action-btn btn btn-sm btn-outline-primary px-3" onclick="toggleLike('${id}')">
+            <i class='far fa-thumbs-up${liked ? ' text-primary' : ''}'></i> ${likeCount} Thích
+          </button>
+          <button class="fb-action-btn btn btn-sm btn-outline-secondary px-3" onclick="document.getElementById('comment-input-${id}').focus()">
+            <i class='far fa-comment'></i> Bình luận
+          </button>
         </div>
         <div class="mt-2 px-1">
           <input class="form-control form-control-sm mb-2" id="comment-input-${id}" placeholder="Viết bình luận..." onkeydown="if(event.key==='Enter') addComment('${id}', this)">
@@ -576,7 +584,7 @@ if (!document.getElementById(`more-comments-${postId}`)) {
   const totalQuery = collection(db, "posts", postId, "comments");
   getCountFromServer(totalQuery).then((res) => {
     const total = res.data().count;
-    moreBtn.textContent = `Xem thêm (${total})`;
+    moreBtn.textContent = `Xem tất cả bình luận..(${total})`;
   });
 }
 
@@ -777,5 +785,59 @@ async function uploadToCloudinary(file) {
   return data.secure_url;
 }
 </script>
+
+<!-- Nút Đăng bài -->
+<button id="postButton" class="btn btn-primary" style="position: fixed; bottom: 20px; left: 20px; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(0,0,0,0.2); z-index: 1000;">
+  ✍️
+</button>
+
+<script>
+  // Xử lý sự kiện bấm nút Đăng bài
+  const postButton = document.getElementById("postButton");
+  const postFormElement = document.getElementById("postForm");
+  const cancelPost = document.getElementById("cancelPost");
+
+  postButton.addEventListener("click", () => {
+    postFormElement.style.display = "block";
+  });
+
+  cancelPost.addEventListener("click", () => {
+    postFormElement.style.display = "none";
+  });
+</script>
+<script>
+  const toggleThemeBtn = document.getElementById("toggleThemeBtn");
+  const body = document.body;
+  // Áp dụng theme đã lưu
+  const savedTheme = localStorage.getItem("theme");
+  if (savedTheme === "light") {
+    body.classList.add("light-mode");
+  }
+  function updateThemeBtn() {
+    if (body.classList.contains("light-mode")) {
+      toggleThemeBtn.innerText = "🌞 Chế độ sáng";
+    } else {
+      toggleThemeBtn.innerText = "🌙 Chế độ tối";
+    }
+  }
+  updateThemeBtn();
+  toggleThemeBtn.onclick = () => {
+    body.classList.toggle("light-mode");
+    const isLight = body.classList.contains("light-mode");
+    localStorage.setItem("theme", isLight ? "light" : "dark");
+    updateThemeBtn();
+  };
+  // Lắng nghe sự kiện thay đổi theme từ tab khác
+  window.addEventListener('storage', (e) => {
+    if (e.key === 'theme') {
+      if (e.newValue === 'light') {
+        body.classList.add('light-mode');
+      } else {
+        body.classList.remove('light-mode');
+      }
+      updateThemeBtn();
+    }
+  });
+</script> 
 </body>
 </html>
