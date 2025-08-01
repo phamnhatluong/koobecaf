@@ -15,14 +15,18 @@
         margin: 0;
         padding: 0;
         min-height: 100vh;
-        font-family: sans-serif;
-        background: #1b1b1b;
+        font-family: 'Segoe UI', Arial, sans-serif;
+        background-color: #18191a;
+        color: #e4e6eb;
       }
 
       .hero {
         min-height: 100vh;
         width: 100%;
         position: absolute;
+        background: #242526;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+        border-radius: 16px;
       }
 
       .main-box {
@@ -184,45 +188,7 @@
     </style>
   </head>
   <body>
-    <script>
-      // Áp dụng theme đã lưu
-      const savedTheme = localStorage.getItem("theme");
-      if (savedTheme === "light") {
-        document.body.classList.add("light-mode");
-      }
-    </script>
-    <button id="toggleThemeBtn" style="position: fixed; top: 20px; left: 20px; z-index: 1001; background: #4a90e2; color: #fff; border: none; border-radius: 8px; padding: 10px 18px; font-weight: 600; box-shadow: 0 2px 8px rgba(0,0,0,0.2); cursor: pointer;">
-      🌙 Chế độ tối
-    </button>
-    <script>
-      const toggleThemeBtn = document.getElementById("toggleThemeBtn");
-      const body = document.body;
-      function updateThemeBtn() {
-        if (body.classList.contains("light-mode")) {
-          toggleThemeBtn.innerText = "🌞 Chế độ sáng";
-        } else {
-          toggleThemeBtn.innerText = "🌙 Chế độ tối";
-        }
-      }
-      updateThemeBtn();
-      toggleThemeBtn.onclick = () => {
-        body.classList.toggle("light-mode");
-        const isLight = body.classList.contains("light-mode");
-        localStorage.setItem("theme", isLight ? "light" : "dark");
-        updateThemeBtn();
-      };
-      // Lắng nghe sự kiện thay đổi theme từ tab khác
-      window.addEventListener('storage', (e) => {
-        if (e.key === 'theme') {
-          if (e.newValue === 'light') {
-            body.classList.add('light-mode');
-          } else {
-            body.classList.remove('light-mode');
-          }
-          updateThemeBtn();
-        }
-      });
-    </script>
+
     <div class="hero">
       <div class="main-box">
         <div class="form-box">
@@ -373,5 +339,6 @@ const firebaseConfig = {
         after.style.left = "50%";
       }
     </script>
+    <script src="theme.js" defer></script>
   </body>
 </html>

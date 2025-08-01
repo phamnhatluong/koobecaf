@@ -11,6 +11,9 @@
   <link rel="icon" href="https://ik.imagekit.io/mprhlnakz/image-11.png">
   <link rel="stylesheet" href="style.css" />
 <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
+<style>
+
+</style>
 </head>
 <body>
 
@@ -64,12 +67,12 @@
   </script>
 
   <!-- HEADER Facebook style -->
-  <nav class="navbar navbar-dark bg-dark px-3 py-2" style="position:sticky;top:0;z-index:1100;">
+  <nav class="navbar navbar-dark bghhh px-3 py-2" style="position:sticky;top:0;z-index:1100;">
     <div class="container-fluid d-flex align-items-center justify-content-between">
       <div class="d-flex align-items-center gap-2">
         <a href="index.html" class="navbar-brand d-flex align-items-center" style="gap:6px;">
           <img src="https://ik.imagekit.io/mprhlnakz/image-11.png" width="38" height="38" style="border-radius:10px;" alt="Koobekaf">
-          <span class="fw-bold fs-4 d-none d-md-inline" style="color:#fff;">Koobekaf</span>
+          <span class="fw-bold fs-4 d-none d-md-inline spantext">Koobekaf</span>
         </a>
        
       </div>
@@ -84,10 +87,10 @@
     
           
         </button>
-        <a href="account.html" class="d-flex align-items-center text-white text-decoration-none">
+        <a href="account.html" class="d-flex align-items-center  text-decoration-none">
           <img id="userAvatar" src="https://i.pravatar.cc/100" alt="avatar" class="avt me-2">
           <input type="file" id="changeAvatarInput" accept="image/*" style="display: none;">
-          <span id="welcomeText" class="fw-semibold"></span>
+          <span id="welcomeText" class="fw-semibold spantext"></span>
         </a>
       </div>
     </div>
@@ -95,7 +98,7 @@
   </nav>
 
   <div class="container-fluid" style="background:#18191a;min-height:100vh;">
-    <div class="row" style="padding-top:24px;">
+    <div class="row" style="">
       <!-- SIDEBAR LEFT -->
       <aside class="col-12 col-md-3 col-lg-2 d-none d-md-block" style="color:#fff;min-height:100vh;">
         <div class="d-flex flex-column gap-2 ps-2 pe-4">
@@ -343,10 +346,11 @@ function renderNotifications() {
       const div = document.createElement("div");
       div.className = "fb-post";
       div.innerHTML = `
-        <div class="fb-header position-relative d-flex align-items-center" style="padding-bottom:2px;">
+      <div class="post">
+        <div class="fb-header position-relative d-flex align-items-center " style="padding-bottom:2px;">
           <img src="${p.avatar || 'https://i.pravatar.cc/100'}" class="fb-avatar me-2" style="box-shadow:0 1px 4px #0002;">
           <div class="fb-info flex-grow-1">
-            <div style="font-weight:600;font-size:1.05em;color:#fff;">${p.author || 'Ẩn danh'}</div>
+            <div style="font-weight:600;font-size:1.05em;">${p.author || 'Ẩn danh'}</div>
             <div class="fb-time text-secondary" style="font-size:0.95em;">${p.createdAt ? dayjs(p.createdAt.toDate()).fromNow() : ""}</div>
           </div>
           ${isAuthor ? `<div class='dropdown post-actions' style='position:relative;z-index:2;'>
@@ -359,7 +363,7 @@ function renderNotifications() {
             </ul>
           </div>` : ""}
         </div>
-        <div class="fb-caption px-1 pb-1" id="content-${id}" style="color:#e4e6eb;font-size:1.08em;">${p.content || ""}</div>
+        <div class="fb-caption px-1 pb-1 post" id="content-${id}" style=";font-size:1.08em;">${p.content || ""}</div>
         ${p.imageUrl ? `<img src="${p.imageUrl}" class="fb-img mb-2" alt="post image" style="border-radius:12px;box-shadow:0 1px 8px #0003;max-height:400px;object-fit:cover;width:100%;">` : ""}
         <!-- Hiển thị số lượng bình luận -->
         <div class="fb-stats mt-2 mb-1 px-1" style="display:flex;align-items:center;gap:16px;font-size:0.98em;color:#b0b8c1;">
@@ -377,6 +381,7 @@ function renderNotifications() {
         <div class="mt-2 px-1">
           <input class="form-control form-control-sm mb-2" id="comment-input-${id}" placeholder="Viết bình luận..." onkeydown="if(event.key==='Enter') addComment('${id}', this)">
           <div id="comments-${id}"></div>
+        </div>
         </div>
       `;
 // Modal chỉnh sửa bài viết
@@ -805,39 +810,6 @@ async function uploadToCloudinary(file) {
     postFormElement.style.display = "none";
   });
 </script>
-<script>
-  const toggleThemeBtn = document.getElementById("toggleThemeBtn");
-  const body = document.body;
-  // Áp dụng theme đã lưu
-  const savedTheme = localStorage.getItem("theme");
-  if (savedTheme === "light") {
-    body.classList.add("light-mode");
-  }
-  function updateThemeBtn() {
-    if (body.classList.contains("light-mode")) {
-      toggleThemeBtn.innerText = "🌞 Chế độ sáng";
-    } else {
-      toggleThemeBtn.innerText = "🌙 Chế độ tối";
-    }
-  }
-  updateThemeBtn();
-  toggleThemeBtn.onclick = () => {
-    body.classList.toggle("light-mode");
-    const isLight = body.classList.contains("light-mode");
-    localStorage.setItem("theme", isLight ? "light" : "dark");
-    updateThemeBtn();
-  };
-  // Lắng nghe sự kiện thay đổi theme từ tab khác
-  window.addEventListener('storage', (e) => {
-    if (e.key === 'theme') {
-      if (e.newValue === 'light') {
-        body.classList.add('light-mode');
-      } else {
-        body.classList.remove('light-mode');
-      }
-      updateThemeBtn();
-    }
-  });
-</script> 
+<script src="theme.js" defer></script>
 </body>
 </html>
