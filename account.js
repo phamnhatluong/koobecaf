@@ -3,6 +3,20 @@ import {
   getAuth,
   signOut,
 } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
+import {
+  getStorage,
+  ref,
+  uploadBytes,
+  getDownloadURL,
+} from "https://www.gstatic.com/firebasejs/11.8.1/firebase-storage.js";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  serverTimestamp,
+  updateDoc,
+  doc,
+} from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyB1hj75YSToaR_RliGxoPAFyGXZVpFqTm4",
@@ -16,6 +30,8 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const storage = getStorage(app);
+const db = getFirestore(app);
 
 let currentUser = JSON.parse(localStorage.getItem("currentUser"));
 if (!currentUser || !currentUser.email) {
@@ -148,3 +164,59 @@ backgroundInput.addEventListener("change", async (event) => {
     alert("Không thể cập nhật ảnh nền. Vui lòng thử lại.");
   }
 });
+
+// Function to upload image to Cloudinary
+async function uploadImageToCloudinary(file) {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', 'nguyendueducation'); // Replace with your Cloudinary upload preset
+
+  const response = await fetch('https://api.cloudinary.com/v1_1/djaw7n4af/image/upload', {
+    method: 'POST',
+    body: formData,
+  });
+
+  const data = await response.json();
+  return data.secure_url;
+}
+
+// Function to create a new post with an image using Cloudinary
+async function createPost() {
+  const content = document.getElementById('postContent').value;
+  const imageFile = document.getElementById('imageUpload').files[0];
+  let imageUrl = null;
+
+  if (imageFile) {
+    imageUrl = await uploadImageToCloudinary(imageFile);
+  }
+
+  const post = {
+    content,
+    imageUrl,
+    author: currentUser.email,
+    createdAt: serverTimestamp(),
+  };
+
+  await addDoc(collection(db, 'posts'), post);
+  alert('Post created successfully!');
+}
+
+// Function to save edited post with an image using Cloudinary
+async function saveEditedPost() {
+  const postId = document.getElementById('editPostModalKoobekaf').dataset.postId;
+  const content = document.getElementById('editPostContent').value;
+  const imageFile = document.getElementById('editImageUpload').files[0];
+  let imageUrl = null;
+
+  if (imageFile) {
+    imageUrl = await uploadImageToCloudinary(imageFile);
+  }
+
+  const updatedPost = {
+    content,
+    ...(imageUrl && { imageUrl }),
+  };
+
+  await updateDoc(doc(db, 'posts', postId), updatedPost);
+  alert('Post updated successfully!');
+}

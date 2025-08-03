@@ -11,6 +11,8 @@
   <link rel="icon" href="https://ik.imagekit.io/mprhlnakz/image-11.png">
   <link rel="stylesheet" href="style.css" />
 <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 <style>
 
 </style>
@@ -122,7 +124,7 @@
   <div class="d-flex align-items-center gap-2 mb-3">
     <label class="btn btn-outline-primary btn-sm mb-0" for="postImageInput" style="border-radius: 12px;">🖼️ Thêm ảnh</label>
     <input type="file" id="postImageInput" accept="image/*" class="form-control form-control-sm d-none">
-    <img id="postPreview" class="img-fluid mb-2 d-none" style="max-height: 300px; border-radius:12px;box-shadow:0 2px 8px rgba(0, 0, 0, 0.3);" />
+    <img id="postPreview" class="img-fluid mb-2 d-none" style="max-height: 300px; border-radius:12px; max: width 4px;00px ;box-shadow:0 2px 8px rgba(0, 0, 0, 0.3);" />
   </div>
   <div class="d-flex justify-content-end gap-3">
     <button type="button" class="btn btn-secondary" id="cancelPost" style="border-radius: 12px; padding: 8px 16px;">Hủy</button>
@@ -395,6 +397,10 @@ const editModalHtml = `
       </div>
       <div class="modal-body">
         <textarea id="editPostContent" class="form-control" rows="4"></textarea>
+        <div class="form-group mt-3">
+          <label for="editImageUpload">Tải lên ảnh</label>
+          <input type="file" id="editImageUpload" class="form-control" accept="image/*">
+        </div>
       </div>
       <div class="modal-footer border-0">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
@@ -625,7 +631,7 @@ async function loadReplies(postId, commentId, parentElement, commentAuthor, post
       }
 
       const reply = document.createElement("div");
-      reply.className = "border rounded p-1 mb-1 bg-light";
+      reply.className = "border rounded p-1 mb-1 ";
       const liked = (r.likes || []).includes(currentUser.email);
 
       reply.innerHTML = `
@@ -779,16 +785,23 @@ window.toggleReplyLike = async function(postId, commentId, replyId) {
 async function uploadToCloudinary(file) {
   const formData = new FormData();
   formData.append("file", file);
-  formData.append("upload_preset", "NguyenDuEducation"); // 👈 Đúng key preset Cloudinary
+  formData.append("upload_preset", "unsigned_koobekaf"); // 👈 preset bạn vừa tạo
 
-  const res = await fetch("https://api.cloudinary.com/v1_1/NguyenDuEducation/image/upload", {
+  const res = await fetch("https://api.cloudinary.com/v1_1/dkn9qkmxe/image/upload", {
     method: "POST",
     body: formData
   });
 
   const data = await res.json();
+
+  if (!res.ok || !data.secure_url) {
+    alert("Lỗi tải ảnh lên Cloudinary: " + (data.error?.message || "không xác định"));
+    throw new Error("Upload thất bại");
+  }
+
   return data.secure_url;
 }
+
 </script>
 
 <!-- Nút Đăng bài -->

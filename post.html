@@ -21,9 +21,19 @@
         color: #e4e6eb;
       }
       .card {
-        background: #242526;
+        background: #000000;
+        color: #ffffff;
         box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
         border-radius: 16px;
+      }
+      body.light-mode .card{
+background: #ffffff !important;
+        color: #000000 !important;
+      }
+      .form-control {
+  color: #ffffff;
+   
+        border: none;
       }
     </style>
   </head>
@@ -208,7 +218,7 @@
             const replyId = docSnap.id;
             const liked = (r.likes || []).includes(currentUser.email);
             const div = document.createElement("div");
-            div.className = "border rounded p-2 mb-2 bg-light";
+            div.className = "border rounded p-2 mb-2  ";
             div.innerHTML = `
             <div class="d-flex align-items-center mb-1">
               <img src="${

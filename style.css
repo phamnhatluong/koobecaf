@@ -723,3 +723,6 @@ body.light-mode .bg-dark{
 body.light-mode .bghhh{
   background-color: rgb(16 151 245);
 }
+.modal-dialog{
+  top:25%;
+}
