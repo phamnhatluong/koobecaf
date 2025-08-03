@@ -297,7 +297,6 @@ function renderNotifications() {
       const div = document.createElement("div");
       div.className = "chat-message" + (isMe ? " me" : "");
       if (isMe) {
-        // Tin nhắn của mình: avatar phải, không hiện tên
         div.innerHTML = `
           <img src="${m.avatar}" class="avatar me-2">
           <div style="display: flex; flex-direction: column; align-items: flex-end;">
@@ -308,9 +307,9 @@ function renderNotifications() {
       } else {
         // Tin nhắn người khác: avatar trái, hiện tên
         div.innerHTML = `
-          <img src="${m.avatar}" class="avatar me-2">
+          <img src="${m.avatar}" class="avatar me-2"> 
           <div style="display: flex; flex-direction: column; align-items: flex-start;">
-            <div style="font-size:0.95em;color:#b0b8c1;font-weight:500;margin-bottom:2px;">${m.user || "Ẩn danh"}</div>
+            <div style="font-size:0.95em;color:#b0b8c1;font-weight:500;margin-bottom:2px;">${m.username || m.user || m.author || "Ẩn danh"}</div>
             <div class="bubble">${m.text || ""}${m.imageUrl ? `<br><img src='${m.imageUrl}'/>` : ""}</div>
             <div class="meta">${m.createdAt ? dayjs(m.createdAt.toDate()).format('HH:mm') : ""}</div>
           </div>
@@ -383,12 +382,14 @@ function renderNotifications() {
           </button>
         </div>
         <div class="mt-2 px-1">
+          <div class="input-group">
           <input class="form-control form-control-sm mb-2" id="comment-input-${id}" placeholder="Viết bình luận..." onkeydown="if(event.key==='Enter') addComment('${id}', this)">
       <label class="comment-image-btn" onmouseover="showTooltip(this)" onmouseout="hideTooltip(this)">
   🖼
   <span class="tooltip-text">Bình luận bằng hình ảnh</span>
   <input type="file" accept="image/*" onchange="addCommentImage('${id}', this)">
 </label>
+</div>
 
 
           <div id="comments-${id}"></div>
@@ -835,7 +836,8 @@ chatImageInput.addEventListener("change", async () => {
   try {
     const imageUrl = await uploadToCloudinary(file);
 
-    await addDoc(collection(db, "chats"), {
+    await addDoc(collection(db, "globalChat"), {
+username: currentUser.username,
       content: "", // không có text
       imageUrl,
       author: currentUser.email,
