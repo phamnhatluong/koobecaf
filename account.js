@@ -220,3 +220,40 @@ async function saveEditedPost() {
   await updateDoc(doc(db, 'posts', postId), updatedPost);
   alert('Post updated successfully!');
 }
+
+// Function to upload image to Cloudinary for comments
+async function uploadCommentImageToCloudinary(file) {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', 'your_upload_preset'); // Replace with your Cloudinary upload preset
+
+  const response = await fetch('https://api.cloudinary.com/v1_1/dkn9qkmxe/image/upload', {
+    method: 'POST',
+    body: formData,
+  });
+
+  const data = await response.json();
+  return data.secure_url;
+}
+
+// Function to add a comment with an image
+async function addCommentWithImage(postId) {
+  const commentInput = document.getElementById(`comment-input-${postId}`);
+  const imageFile = document.getElementById('commentImageUpload').files[0];
+  let imageUrl = null;
+
+  if (imageFile) {
+    imageUrl = await uploadCommentImageToCloudinary(imageFile);
+  }
+
+  const comment = {
+    content: commentInput.value,
+    imageUrl,
+    author: currentUser.email,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+  };
+
+  await firebase.firestore().collection('posts').doc(postId).collection('comments').add(comment);
+  alert('Comment added successfully!');
+  commentInput.value = '';
+}
