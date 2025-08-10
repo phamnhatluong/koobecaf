@@ -76,47 +76,62 @@ if (userAvatar) {
   });
 }
 
-if (accountAvatar && avatarInput) {
-  accountAvatar.addEventListener("click", () => {
-    const accept = confirm("Bạn có muốn đổi ảnh đại diện không?");
+// Add event listener to account-avatar for editing avatar
+// Add debugging logs to identify issues
+const accountAvatarElements = document.querySelectorAll('.account-avatar');
+
+accountAvatarElements.forEach((avatarElement) => {
+  avatarElement.addEventListener('click', () => {
+    console.log('Avatar clicked');
+    const accept = confirm('Bạn có muốn đổi ảnh đại diện không?');
     if (accept) {
+      console.log('Avatar change accepted');
       avatarInput.click();
     }
   });
+});
 
-  avatarInput.addEventListener("change", async (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
+avatarInput.addEventListener("change", async (event) => {
+  const file = event.target.files[0];
+  if (!file) {
+    console.log('No file selected');
+    return;
+  }
 
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", "nguyendueducation");
+  console.log('File selected:', file.name);
 
-    try {
-      const res = await fetch(
-        "https://api.cloudinary.com/v1_1/djaw7n4af/image/upload",
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', 'nguyendueducation');
 
-      const data = await res.json();
-      const imageUrl = data.secure_url;
+  try {
+    const res = await fetch(
+      'https://api.cloudinary.com/v1_1/djaw7n4af/image/upload',
+      {
+        method: 'POST',
+        body: formData,
+      }
+    );
 
-      if (userAvatar) userAvatar.src = imageUrl;
-      if (accountAvatar) accountAvatar.src = imageUrl;
+    const data = await res.json();
+    console.log('Cloudinary response:', data);
 
-      currentUser.avatar = imageUrl;
-      localStorage.setItem("currentUser", JSON.stringify(currentUser));
+    const imageUrl = data.secure_url;
 
-      alert("Ảnh đại diện đã được cập nhật!");
-    } catch (error) {
-      console.error("Upload avatar thất bại:", error);
-      alert("Không thể cập nhật ảnh đại diện. Vui lòng thử lại.");
-    }
-  });
-}
+    accountAvatarElements.forEach((el) => {
+      el.src = imageUrl;
+    });
+
+    currentUser.avatar = imageUrl;
+    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+    console.log('Avatar updated successfully:', imageUrl);
+    alert('Ảnh đại diện đã được cập nhật!');
+  } catch (error) {
+    console.error('Upload avatar thất bại:', error);
+    alert('Không thể cập nhật ảnh đại diện. Vui lòng thử lại.');
+  }
+});
 
 selectImgBtn.addEventListener("click", (event) => {
   event.preventDefault();
@@ -139,7 +154,8 @@ backgroundInput.addEventListener("change", async (event) => {
 
   const formData = new FormData();
   formData.append("file", file);
-  formData.append("upload_preset", "nguyendueducation");
+  formData.append("upload_preset", "unsigned_koobekaf");
+
 
   try {
     const res = await fetch(
@@ -257,3 +273,4 @@ async function addCommentWithImage(postId) {
   alert('Comment added successfully!');
   commentInput.value = '';
 }
+
