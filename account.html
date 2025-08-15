@@ -1,162 +1,361 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Trang cá Nhân</title>
-    <link rel="icon" href="https://ik.imagekit.io/mprhlnakz/image-11.png">
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <link
-      href="https://getbootstrap.com/docs/5.3/assets/css/docs.css"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="style.css" />
-    <link rel="stylesheet" href="account.css" />
-    <script
-      defer
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"
-    ></script>
-    <style>
-      body {
-    font-family: 'Segoe UI', Arial, sans-serif;
-    background-color: #18191a;
-    color: #e4e6eb;
-  }
-  .background-account {
-    background: #242526;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-  }
-      .w-100 {
-        height: 500px;
-      }
-      .index-button {
-        position: fixed;
-        bottom: 20px;
-        left: 20px;
-        width: 60px;
-        height: 60px;
-        background-color: #ff9f00;
-        color: white;
-        border-radius: 50%;
-        font-size: 24px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        text-decoration: none;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-        z-index: 1000;
-        transition: transform 0.2s ease;
-      }
-      .index-button:hover {
-        transform: scale(1.1);
-      }
-    </style>
-  </head>
-  <body>
-    <script>
-      // Kiểm tra đăng nhập trước khi hiển thị nội dung
-      const user = JSON.parse(localStorage.getItem("currentUser") || "{}");
-      if (!user.email) {
-        window.location.href = "login.html";
-      }
-    </script>
-    <a href="index.html" class="index-button"> 💬 </a>
-    <button id="logoutBtn" style="position: fixed; top: 20px; right: 20px; z-index: 1001; background: #e53935; color: #fff; border: none; border-radius: 8px; padding: 10px 18px; font-weight: 600; box-shadow: 0 2px 8px rgba(24,119,242,0.10); cursor: pointer;">Đăng xuất</button>
-    <script>
-      document.getElementById('logoutBtn').onclick = function() {
-        localStorage.removeItem('currentUser');
-        window.location.href = 'login.html';
-      };
-    </script>
-<button id="toggleThemeBtn"
-  style="position: fixed; top: 20px; left: 20px; z-index: 1001; background: #4a90e2; color: #fff; border: none; border-radius: 8px; padding: 10px 18px; font-weight: 600; box-shadow: 0 2px 8px rgba(0,0,0,0.2); cursor: pointer;">
-  🌙 Chế độ tối
-</button>
-
-    <div class="repare">
-      <div class="background-account">
-        <button class="select-img" style="opacity: 0">chọn ảnh của bạn</button>
-        <img
-          src="https://picsum.photos/200/300"
-          alt="Random Image"
-          class="background-img"
-        />
-        <input
-          type="file"
-          id="backgroundInput"
-          accept="image/*"
-          style="display: none"
-        />
-        <div class="img-main-account">
-          <img
-  src="https://i.pravatar.cc/100"
-  userAvatar
-  class="account-avatar"
-  alt="avatar"
-/>
-<input type="file" id="avatarInput" accept="image/*" style="display: none" />
-
-
-          <span id="welcomeaccount" style="margin: 0"></span>
-        </div>
-      </div>
-    </div>
-    <script>
-      const currentUser = JSON.parse(
-        localStorage.getItem("currentUser") || "{}"
-      );
-      if (currentUser.avatar) {
-        document.querySelectorAll("[userAvatar]").forEach((el) => {
-          el.src = currentUser.avatar;
-        });
-      }
-      if (currentUser.username) {
-        document.getElementById(
-          "welcomeText"
-        ).innerText = ` ${currentUser.username}`;
-        const accText = document.getElementById("welcomeaccount");
-        if (accText) accText.innerText = ` ${currentUser.username}`;
-      }
-    </script>
-<script>
-  const toggleThemeBtn = document.getElementById("toggleThemeBtn");
-  const body = document.body;
-  // Áp dụng theme đã lưu
-  const savedTheme = localStorage.getItem("theme");
-  if (savedTheme === "light") {
-    body.classList.add("light-mode");
-  }
-  function updateThemeBtn() {
-    if (body.classList.contains("light-mode")) {
-      toggleThemeBtn.innerText = "🌞 Chế độ sáng";
-    } else {
-      toggleThemeBtn.innerText = "🌙 Chế độ tối";
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Trang cá nhân</title>
+  <link rel="icon" href="https://ik.imagekit.io/mprhlnakz/image-11.png"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/relativeTime.js"></script>
+  <script>dayjs.extend(dayjs_plugin_relativeTime)</script>
+  <style>
+    :root {
+      --card-bg: #242526;
+      --text: #e4e6eb;
+      --muted: #b0b3b8;
+      --shadow: 0 4px 16px rgba(0,0,0,0.3);
     }
+    body {
+      background: #18191a;
+      color: var(--text);
+      font-family: 'Segoe UI', Arial, sans-serif;
+    }
+    body.light-mode {
+      background: #f0f2f5;
+      color: #000;
+      --card-bg: #ffffff;
+      --text: #000;
+      --muted: #606770;
+      --shadow: 0 4px 16px rgba(0,0,0,0.08);
+    }
+    .profile-header {
+      position: relative;
+      margin-bottom: 72px;
+    }
+    .cover-photo {
+      width: 100%;
+      height: 340px;
+      object-fit: cover;
+      border-radius: 0 0 16px 16px;
+      cursor: pointer;
+    }
+    .avatar-wrap {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: -68px;
+      text-align: center;
+    }
+    .account-avatar {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      border: 4px solid #fff;
+      object-fit: cover;
+      cursor: pointer;
+    }
+    #welcomeaccount {
+      display: block;
+      margin-top: 12px;
+      font-weight: 700;
+      font-size: 1.4rem;
+    }
+    .fixed-actions {
+      position: fixed;
+      top: 18px;
+      display: flex;
+      gap: 10px;
+      width: 100%;
+      padding: 0 18px;
+      z-index: 1001;
+      pointer-events: none;
+    }
+    .fixed-actions > * {
+      pointer-events: auto;
+    }
+    .btn-chip {
+      border: none;
+      border-radius: 10px;
+      padding: 8px 14px;
+      font-weight: 600;
+      box-shadow: var(--shadow);
+    }
+    #toggleThemeBtn { background: #4a90e2; color: #fff; }
+    #logoutBtn { background: #e53935; color: #fff; }
+    .profile-menu {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      padding: 12px 8px;
+      position: sticky;
+      top: 0;
+      background: inherit;
+      z-index: 10;
+    }
+    .profile-menu .tab-btn {
+      background: transparent;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-weight: 600;
+      color: inherit;
+    }
+    .profile-menu .tab-btn.active,
+    .profile-menu .tab-btn:hover {
+      background: rgba(255,255,255,.12);
+    }
+    body.light-mode .profile-menu .tab-btn.active,
+    body.light-mode .profile-menu .tab-btn:hover {
+      background: #ebedf0;
+    }
+    .card-surface {
+      background: var(--card-bg);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+    }
+    .post-card {
+      padding: 16px;
+      margin-bottom: 18px;
+      cursor: pointer;
+    }
+    .post-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .post-head img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+    .post-head small { color: var(--muted); }
+    .post-body { white-space: pre-wrap; word-break: break-word; }
+    .post-image { width: 100%; max-height: 520px; object-fit: cover; border-radius: 12px; margin-top: 10px; }
+    #nicknameModal {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+    }
+    #nicknameModal .modal-content {
+      background: var(--card-bg);
+      color: inherit;
+      width: 320px;
+      border-radius: 14px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+  </style>
+</head>
+<body>
+<script>
+  const localUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+  if (!localUser.email) location.href = 'login.html';
+</script>
+<div class="fixed-actions">
+  <button id="toggleThemeBtn" class="btn-chip">🌙 Chế độ tối</button>
+  <div style="flex:1"></div>
+  <a href="index.html" class="btn-chip text-decoration-none" style="background:#ff9f00; color:#fff;">💬 Diễn đàn</a>
+  <button id="logoutBtn" class="btn-chip">Đăng xuất</button>
+</div>
+
+<div class="profile-header">
+  <img id="coverPhoto" class="cover-photo" src="https://picsum.photos/1200/400">
+  <input type="file" id="backgroundInput" accept="image/*" hidden>
+  <div class="avatar-wrap">
+    <img id="profileAvatar" class="account-avatar" src="https://i.pravatar.cc/150">
+    <input type="file" id="avatarInput" accept="image/*" hidden>
+    <span id="welcomeaccount">Người dùng</span>
+    <div class="mt-2">
+      <button id="editNicknameBtn" class="btn btn-primary btn-sm">Đổi biệt danh</button>
+    </div>
+  </div>
+</div>
+
+<div class="profile-menu">
+  <button class="tab-btn active" data-tab="posts">Bài viết</button>
+  <button class="tab-btn" data-tab="about">Giới thiệu</button>
+  <button class="tab-btn" data-tab="photos">Ảnh</button>
+</div>
+
+<div class="container my-4">
+  <div id="tab-posts"><div id="postList"></div></div>
+  <div id="tab-about" style="display:none;">
+    <div class="card-surface p-3"><h5>Giới thiệu</h5><div class="text-secondary">Đang phát triển…</div></div>
+  </div>
+  <div id="tab-photos" style="display:none;">
+    <div class="card-surface p-3"><h5>Ảnh</h5><div id="photoGrid" class="row g-2"></div></div>
+  </div>
+</div>
+
+<div id="nicknameModal">
+  <div class="modal-content">
+    <h5 class="mb-3">Đổi biệt danh</h5>
+    <input id="nicknameInput" type="text" class="form-control" placeholder="Nhập biệt danh mới">
+    <div class="text-end mt-3 d-flex gap-2 justify-content-end">
+      <button id="cancelNickname" class="btn btn-secondary">Hủy</button>
+      <button id="saveNickname" class="btn btn-primary">Lưu</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
+  import { getAuth } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
+  import { getFirestore, doc, getDoc, updateDoc, collection, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyB1hj75YSToaR_RliGxoPAFyGXZVpFqTm4",
+    authDomain: "we-are-always-here.firebaseapp.com",
+    projectId: "we-are-always-here",
+    storageBucket: "we-are-always-here.firebasestorage.app",
+    messagingSenderId: "976166105043",
+    appId: "1:976166105043:web:1ea3a17025c4df62148926",
+    measurementId: "G-R8VN95690J"
+  };
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  let currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+  const uid = currentUser.uid || (auth.currentUser && auth.currentUser.uid);
+
+  const $ = id => document.getElementById(id);
+  const setLS = () => localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+  async function saveUserField(field, value) {
+    currentUser[field] = value;
+    setLS();
+    if (uid) await updateDoc(doc(db, 'users', uid), { [field]: value });
   }
+
+  // Theme
+  const body = document.body;
+  if (localStorage.getItem('theme') === 'light') body.classList.add('light-mode');
+  const updateThemeBtn = () => {
+    $('toggleThemeBtn').innerText = body.classList.contains('light-mode') ? '🌞 Chế độ sáng' : '🌙 Chế độ tối';
+  };
   updateThemeBtn();
-  toggleThemeBtn.onclick = () => {
-    body.classList.toggle("light-mode");
-    const isLight = body.classList.contains("light-mode");
-    localStorage.setItem("theme", isLight ? "light" : "dark");
+  $('toggleThemeBtn').onclick = () => {
+    body.classList.toggle('light-mode');
+    localStorage.setItem('theme', body.classList.contains('light-mode') ? 'light' : 'dark');
     updateThemeBtn();
   };
-  // Lắng nghe sự kiện thay đổi theme từ tab khác
-  window.addEventListener('storage', (e) => {
-    if (e.key === 'theme') {
-      if (e.newValue === 'light') {
-        body.classList.add('light-mode');
-      } else {
-        body.classList.remove('light-mode');
-      }
-      updateThemeBtn();
+
+  $('logoutBtn').onclick = () => {
+    localStorage.removeItem('currentUser');
+    location.href = 'login.html';
+  };
+
+  $('welcomeaccount').textContent = currentUser.username || currentUser.email || 'Người dùng';
+  if (currentUser.avatar) $('profileAvatar').src = currentUser.avatar;
+  if (currentUser.background) $('coverPhoto').src = currentUser.background;
+
+  // Load Firestore data
+  (async () => {
+    if (!uid) return;
+    const snap = await getDoc(doc(db, 'users', uid));
+    if (snap.exists()) {
+      const data = snap.data();
+      if (data.username) { $('welcomeaccount').textContent = data.username; currentUser.username = data.username; }
+      if (data.avatar) { $('profileAvatar').src = data.avatar; currentUser.avatar = data.avatar; }
+      if (data.background) { $('coverPhoto').src = data.background; currentUser.background = data.background; }
+      setLS();
+    }
+  })();
+
+  // Nickname modal
+  $('editNicknameBtn').onclick = () => {
+    $('nicknameInput').value = currentUser.username || '';
+    $('nicknameModal').style.display = 'flex';
+  };
+  $('cancelNickname').onclick = () => $('nicknameModal').style.display = 'none';
+  $('saveNickname').onclick = async () => {
+    const name = $('nicknameInput').value.trim();
+    if (!name) return alert('Vui lòng nhập biệt danh!');
+    $('welcomeaccount').textContent = name;
+    await saveUserField('username', name);
+    $('nicknameModal').style.display = 'none';
+  };
+
+  // Avatar
+  $('profileAvatar').onclick = () => $('avatarInput').click();
+  $('avatarInput').onchange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const fd = new FormData();
+    fd.append('file', file);
+    fd.append('upload_preset', 'unsigned_koobekaf');
+    const res = await fetch('https://api.cloudinary.com/v1_1/dkn9qkmxe/image/upload', { method: 'POST', body: fd });
+    const data = await res.json();
+    console.log("Avatar upload:", data);
+    if (!data.secure_url) return alert(`Lỗi tải avatar: ${data.error?.message || 'Không xác định'}`);
+    $('profileAvatar').src = data.secure_url;
+    await saveUserField('avatar', data.secure_url);
+  };
+
+  // Background
+  $('coverPhoto').onclick = () => $('backgroundInput').click();
+  $('backgroundInput').onchange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const fd = new FormData();
+    fd.append('file', file);
+    fd.append('upload_preset', 'unsigned_koobekaf');
+    const res = await fetch('https://api.cloudinary.com/v1_1/dkn9qkmxe/image/upload', { method: 'POST', body: fd });
+    const data = await res.json();
+    console.log("Background upload:", data);
+    if (!data.secure_url) return alert(`Lỗi tải ảnh nền: ${data.error?.message || 'Không xác định'}`);
+    $('coverPhoto').src = data.secure_url;
+    await saveUserField('background', data.secure_url);
+    alert('Cập nhật ảnh nền thành công!');
+  };
+
+  // Tabs
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const tab = btn.dataset.tab;
+      $('tab-posts').style.display = tab === 'posts' ? '' : 'none';
+      $('tab-about').style.display = tab === 'about' ? '' : 'none';
+      $('tab-photos').style.display = tab === 'photos' ? '' : 'none';
+    });
+  });
+
+  // Posts
+  const postList = $('postList');
+  const qPosts = query(collection(db, 'posts'), orderBy('createdAt', 'desc'));
+  onSnapshot(qPosts, (snap) => {
+    postList.innerHTML = '';
+    const photos = [];
+    snap.forEach(docSnap => {
+      const p = docSnap.data();
+      const pid = docSnap.id;
+      if (p.author !== (currentUser.email || '')) return;
+      const card = document.createElement('div');
+      card.className = 'card-surface post-card';
+      card.onclick = () => location.href = `post.html?id=${pid}`;
+      card.innerHTML = `
+        <div class="post-head">
+          <img src="${p.avatar || currentUser.avatar || 'https://i.pravatar.cc/100?u=me'}">
+          <div>
+            <div class="fw-semibold">${p.author || currentUser.username || 'Tôi'}</div>
+            <small>${p.createdAt ? dayjs(p.createdAt.toDate()).fromNow() : ''}</small>
+          </div>
+        </div>
+        <div class="post-body">${(p.content || '').replace(/</g, '&lt;')}</div>
+        ${p.imageUrl ? `<img class="post-image" src="${p.imageUrl}">` : ''}
+      `;
+      postList.appendChild(card);
+      if (p.imageUrl) photos.push(p.imageUrl);
+    });
+    const grid = $('photoGrid');
+    if (grid) {
+      grid.innerHTML = '';
+      photos.slice(0, 24).forEach(url => {
+        const col = document.createElement('div');
+        col.className = 'col-6 col-md-4 col-lg-3';
+        col.innerHTML = `<img src="${url}" class="w-100 rounded" style="object-fit:cover;height:160px">`;
+        grid.appendChild(col);
+      });
     }
   });
 </script>
-<script src="theme.js" defer></script>
-    <script type="module" src="account.js"></script>
-  
-  </body>
+</body>
 </html>
