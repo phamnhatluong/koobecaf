@@ -45,3 +45,10 @@
   font-size: 1.3rem;
   font-weight: 600;
 }
+.text-muted {
+    color: rgb(255 255 255 / 75%) !important;
+}
+body.light-mode .text-muted {
+    --bs-text-opacity: 1;
+    color: rgba(0, 0, 0, 0.75) !important;
+}
