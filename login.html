@@ -280,7 +280,13 @@ const firebaseConfig = {
         createUserWithEmailAndPassword(auth, email, password)
           .then((userCredential) => {
             alert("Đăng ký thành công!");
-            localStorage.setItem("currentUser", JSON.stringify({ email }));
+            localStorage.setItem("currentUser", JSON.stringify({
+  uid: userCredential.user.uid,      // lưu UID
+  email: userCredential.user.email,  // email
+  username: "",                      // nickname, để trống ban đầu
+  avatar: userCredential.user.photoURL || ""
+}));
+
             window.location.href = "index.html";
           })
           .catch((error) => alert(error.message));
@@ -294,7 +300,13 @@ const firebaseConfig = {
         signInWithEmailAndPassword(auth, email, password)
           .then((userCredential) => {
             alert("Đăng nhập thành công!");
-            localStorage.setItem("currentUser", JSON.stringify({ email }));
+            localStorage.setItem("currentUser", JSON.stringify({
+  uid: userCredential.user.uid,      // lưu UID
+  email: userCredential.user.email,  // email
+  username: "",                      // nickname, để trống ban đầu
+  avatar: userCredential.user.photoURL || ""
+}));
+
             window.location.href = "index.html";
           })
           .catch((error) => alert(error.message));
@@ -309,10 +321,13 @@ const firebaseConfig = {
             .then((result) => {
               const user = result.user;
               alert("Đăng nhập bằng Google thành công!");
-              localStorage.setItem(
-                "currentUser",
-                JSON.stringify({ email: user.email, avatar: user.photoURL })
-              );
+              localStorage.setItem("currentUser", JSON.stringify({
+  uid: user.uid,
+  email: user.email,
+  username: user.displayName || "",  // Google có sẵn displayName
+  avatar: user.photoURL
+}));
+
               window.location.href = "index.html";
             })
             .catch((error) => alert("Lỗi đăng nhập Google: " + error.message));
@@ -339,6 +354,22 @@ const firebaseConfig = {
         btn.style.left = "0px";
         after.style.left = "50%";
       }
+      import { onSnapshot, doc } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
+
+if (currentUser.uid) {
+  onSnapshot(doc(db, "users", currentUser.uid), (snap) => {
+    if (snap.exists()) {
+      const data = snap.data();
+      if (data.username) {
+        currentUser.username = data.username;
+        localStorage.setItem("currentUser", JSON.stringify(currentUser));
+        const el = document.getElementById("welcomeaccount") || document.getElementById("welcomeText");
+        if (el) el.textContent = data.username;
+      }
+    }
+  });
+}
+
     </script>
     <script src="theme.js" defer></script>
   </body>

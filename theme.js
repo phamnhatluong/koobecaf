@@ -36,4 +36,16 @@ window.addEventListener("storage", (e) => {
     }
     updateThemeBtn();
   }
+
+  // Listen for username changes from other tabs
+  if (e.key === "currentUser") {
+    const updatedUser = JSON.parse(e.newValue || "{}");
+    const welcomeText = document.getElementById("welcomeText");
+    const welcomeAccount = document.getElementById("welcomeaccount");
+
+    if (updatedUser.username) {
+      if (welcomeText) welcomeText.innerText = updatedUser.username;
+      if (welcomeAccount) welcomeAccount.innerText = updatedUser.username;
+    }
+  }
 });

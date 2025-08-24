@@ -694,7 +694,7 @@ body.light-mode .post{
   color: #000 !important;
 }
 .container-fluid {
-    padding: 20px;
+    padding: 10px;
     border-radius: 16px;
     background: #242526;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);

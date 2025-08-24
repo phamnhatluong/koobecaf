@@ -91,12 +91,15 @@ background: #ffffff !important;
       const commentList = document.getElementById("commentList");
 
       const rawUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
-      const currentUser = {
-        email: rawUser.email || "khách",
-        avatar: rawUser.avatar?.startsWith("https")
-          ? rawUser.avatar
-          : "https://i.pravatar.cc/100?u=default",
-      };
+const currentUser = {
+  uid: rawUser.uid,
+  email: rawUser.email || "khách",
+  username: rawUser.username || rawUser.email || "Người dùng",
+  avatar: rawUser.avatar?.startsWith("https")
+    ? rawUser.avatar
+    : "https://i.pravatar.cc/100?u=default",
+};
+
 
       async function loadPost() {
         if (!postId)
@@ -135,7 +138,8 @@ background: #ffffff !important;
             const content = e.target.value.trim();
             if (!content) return;
             await addDoc(collection(db, "posts", postId, "comments"), {
-              author: currentUser.email,
+              author: currentUser.username || currentUser.email
+,
               avatar: currentUser.avatar,
               content,
               createdAt: serverTimestamp(),
@@ -203,7 +207,8 @@ background: #ffffff !important;
         await addDoc(
           collection(db, "posts", postId, "comments", commentId, "replies"),
           {
-            author: currentUser.email,
+            author: currentUser.username || currentUser.email
+,
             avatar: currentUser.avatar,
             content: text,
             createdAt: serverTimestamp(),
@@ -279,6 +284,55 @@ background: #ffffff !important;
 
       loadPost();
       loadComments();
+//       import { getDoc, doc } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
+
+// // const uid = currentUser.uid;
+
+// if (uid) {
+//   const snap = await getDoc(doc(db, 'users', uid));
+//   if (snap.exists()) {
+//     const data = snap.data();
+//     if (data.username) {
+//       currentUser.username = data.username;
+//       localStorage.setItem('currentUser', JSON.stringify(currentUser));
+//       document.getElementById("welcomeaccount").textContent = data.username;
+//     }
+//   }
+// }
+import { onSnapshot, doc } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
+
+// const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+const uid = currentUser.uid;
+
+if (uid) {
+  onSnapshot(doc(db, 'users', uid), (snap) => {
+    if (snap.exists()) {
+      const data = snap.data();
+      if (data.username) {
+        currentUser.username = data.username;
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        const el = document.getElementById("welcomeaccount");
+        if (el) el.textContent = data.username;
+      }
+    }
+  });
+}
+import { onSnapshot, doc } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
+
+if (currentUser.uid) {
+  onSnapshot(doc(db, "users", currentUser.uid), (snap) => {
+    if (snap.exists()) {
+      const data = snap.data();
+      if (data.username) {
+        currentUser.username = data.username;
+        localStorage.setItem("currentUser", JSON.stringify(currentUser));
+        const el = document.getElementById("welcomeaccount") || document.getElementById("welcomeText");
+        if (el) el.textContent = data.username;
+      }
+    }
+  });
+}
+
     </script>
   </body>
 </html>
