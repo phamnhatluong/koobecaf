@@ -14,49 +14,17 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <style>
-  body {
-    font-family: 'Segoe UI', Arial, sans-serif;
-    background-color: #18191a;
-    color: #e4e6eb;
-  }
-  .navbar {
-    background: linear-gradient(135deg, #23272f 60%, #18191a 100%);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
-  }
-  .btn-primary {
-    background: linear-gradient(135deg, #a259ff 60%, #6a5cff 100%);
-    border: none;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-  }
-  .btn-primary:hover {
-    background: linear-gradient(135deg, #6a5cff 60%, #a259ff 100%);
-  }
-  .chat-box {
-    background: #242526;
-    border-radius: 12px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-  }
-  .chat-box-header {
-    font-weight: 600;
-    color: #a259ff;
-  }
-  body.light-mode .chat-message.me .bubble {
-    margin-right: 0;
-    background-color: rgb(0, 255, 251) !important;
-    margin-left: auto;
-}
+
 </style>
 </head>
 <body>
 
 
   <script>
-    // Kiểm tra đăng nhập trước khi hiển thị nội dung
     const user = JSON.parse(localStorage.getItem("currentUser") || "{}");
     if (!user.email) {
       window.location.href = "login.html";
     }
-    // Áp dụng theme đã lưu
     const savedTheme = localStorage.getItem("theme");
     if (savedTheme === "light") {
       document.body.classList.add("light-mode");
@@ -70,7 +38,6 @@
   <script>
     const toggleThemeBtn = document.getElementById("toggleThemeBtn");
     const body = document.body;
-    // Đặt lại text nút khi load
     function updateThemeBtn() {
       if (body.classList.contains("light-mode")) {
         toggleThemeBtn.innerText = "🌞 Chế độ sáng";
@@ -85,7 +52,6 @@
       localStorage.setItem("theme", isLight ? "light" : "dark");
       updateThemeBtn();
     };
-    // Lắng nghe sự kiện thay đổi theme từ tab khác
     window.addEventListener('storage', (e) => {
       if (e.key === 'theme') {
         if (e.newValue === 'light') {
@@ -98,7 +64,6 @@
     });
   </script>
 
-  <!-- HEADER Facebook style -->
   <nav class="navbar navbar-dark bghhh px-3 py-2" style="position:sticky;top:0;z-index:1100;">
     <div class="container-fluid d-flex align-items-center justify-content-between">
       <div class="d-flex align-items-center gap-2">
@@ -226,7 +191,6 @@ const notifiedCommentIds = new Set();
   const db = getFirestore(app);
   const storage = getStorage(app);
 
-  // Đảm bảo chỉ khởi tạo currentUser 1 lần duy nhất
   let rawUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
   let currentUser = {
   uid: rawUser.uid,
@@ -237,7 +201,6 @@ const notifiedCommentIds = new Set();
 
 
 
-  // Chuông thông báo
   const notificationBtn = document.getElementById("notificationBtn");
   const notificationList = document.getElementById("notificationList");
   const notificationCount = document.getElementById("notificationCount");
@@ -252,7 +215,7 @@ const notifiedCommentIds = new Set();
 
  function showCommentNotification(postId, commenter, content) {
   const truncated = content.length > 30 ? content.slice(0, 30) + "..." : content;
-  const id = Date.now() + Math.random().toString(36).substring(2, 8); // id ngẫu nhiên
+  const id = Date.now() + Math.random().toString(36).substring(2, 8); 
   const msg = {
     id,
     html: `<a href="post.html?id=${postId}" class="text-decoration-none text-dark notification-link" data-id="${id}">
@@ -268,22 +231,16 @@ function renderNotifications() {
   notificationCount.innerText = notifications.length;
   notificationCount.style.display = notifications.length ? "inline-block" : "none";
 
-  // Gắn sự kiện khi click vào từng thông báo
   const links = document.querySelectorAll(".notification-link");
   links.forEach(link => {
     link.addEventListener("click", (e) => {
       const id = link.dataset.id;
-      // Xóa thông báo đã click
       notifications = notifications.filter(n => n.id !== id);
-      renderNotifications(); // Cập nhật lại
+      renderNotifications(); 
     });
   });
 }
 
-
-
-
-  // Chat toggle
   const toggleChatBtn = document.getElementById("toggleChatBtn");
   const chatContainer = document.getElementById("chatContainer");
   toggleChatBtn.onclick = () => {
@@ -297,7 +254,7 @@ function renderNotifications() {
     const msg = chatInput.value.trim();
     if (!msg) return;
     await addDoc(collection(db, "globalChat"), {
-  user: currentUser.email, // 👈 thêm trường user
+  user: currentUser.email, 
   username: currentUser.username || currentUser.email,
   avatar: currentUser.avatar,
   text: msg,
@@ -329,7 +286,7 @@ if (currentUser.uid) {
     await uploadBytes(imageRef, file);
     const imageUrl = await getDownloadURL(imageRef);
     await addDoc(collection(db, "globalChat"), {
-  user: currentUser.email, // 👈 thêm trường user
+  user: currentUser.email,
   username: currentUser.username || currentUser.email,
   avatar: currentUser.avatar,
   text: msg,
@@ -356,7 +313,6 @@ if (currentUser.uid) {
           </div>
         `;
       } else {
-        // Tin nhắn người khác: avatar trái, hiện tên
         div.innerHTML = `
           <img src="${m.avatar}" class="avatar me-2"> 
           <div style="display: flex; flex-direction: column; align-items: flex-start;">
@@ -373,18 +329,6 @@ if (currentUser.uid) {
 
   const postForm = document.getElementById("postForm");
   const postList = document.getElementById("postList");
-  // postForm.addEventListener("submit", async (e) => {
-  //   e.preventDefault();
-  //   const content = postForm.postContent.value.trim();
-  //   if (!content) return alert("Nội dung không được trống!");
-  //   await addDoc(collection(db, "posts"), {
-  //     author: currentUser.email,
-  //     avatar: currentUser.avatar,
-  //     content: content,
-  //     createdAt: serverTimestamp()
-  //   });
-  //   postForm.reset();
-  // });
 
   const postQuery = query(collection(db, "posts"), orderBy("createdAt", "desc"));
   onSnapshot(postQuery, (snapshot) => {
@@ -447,7 +391,6 @@ if (currentUser.uid) {
         </div>
         </div>
       `;
-// Modal chỉnh sửa bài viết
 const editModalHtml = `
 <div class="modal fade" id="editPostModalKoobekaf" tabindex="-1" aria-labelledby="editPostModalLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -479,9 +422,7 @@ window.showEditModal = function(postId, content) {
   const modal = document.getElementById('editPostModalKoobekaf');
   const textarea = modal.querySelector('#editPostContent');
   textarea.value = decodeURIComponent(content || "");
-  // Lưu id vào modal để dùng khi lưu
   modal.setAttribute('data-post-id', postId);
-  // Hiện modal
   const bsModal = new bootstrap.Modal(modal);
   bsModal.show();
 };
@@ -500,7 +441,6 @@ document.getElementById('saveEditPostBtn').onclick = async function() {
   const bsModal = bootstrap.Modal.getInstance(modal);
   bsModal.hide();
 };
-  // CSS nâng cấp giao diện Koobekaf
   const style = document.createElement('style');
   style.innerHTML = `
     .fb-post { background: #242526; border-radius: 12px; box-shadow: 0 2px 8px #0002; margin-bottom: 24px; padding: 16px 12px 8px 12px; transition: box-shadow .2s; }
@@ -566,7 +506,6 @@ document.getElementById('saveEditPostBtn').onclick = async function() {
     limit(5)
   );
 
-  // Lắng nghe realtime chỉ 5 bình luận mới nhất
   onSnapshot(q, (snap) => {
     div.innerHTML = "";
     
@@ -574,7 +513,6 @@ document.getElementById('saveEditPostBtn').onclick = async function() {
       const c = docSnap.data();
       const cid = docSnap.id;
 
-      // Gửi thông báo nếu là người khác bình luận vào bài của mình
       if (
         postAuthor === currentUser.email &&
         c.author !== currentUser.email &&
@@ -611,24 +549,19 @@ document.getElementById('saveEditPostBtn').onclick = async function() {
 
       div.appendChild(el);
       loadReplies(postId, cid, el, c.author, postContent);
-// Hiển thị ô nhập phản hồi cho bình luận
 window.showReplyInput = function(postId, commentId) {
   const box = document.getElementById(`reply-box-${commentId}`);
   if (!box) return;
-  // Nếu đã có input thì không thêm nữa
   if (box.querySelector('input')) return;
   box.innerHTML = `
     <input class="form-control mb-1" placeholder="Nhập phản hồi..." id="reply-input-${commentId}" />
     <button class="btn btn-sm btn-primary" onclick="addReply('${postId}', '${commentId}')">Gửi</button>
   `;
-  // Tự động focus vào input
   setTimeout(() => {
     const inp = document.getElementById(`reply-input-${commentId}`);
     if (inp) inp.focus();
   }, 100);
 };
-
-// Thêm phản hồi vào Firestore
 window.addReply = async function(postId, commentId) {
   const inp = document.getElementById(`reply-input-${commentId}`);
   if (!inp) return;
@@ -642,13 +575,9 @@ window.addReply = async function(postId, commentId) {
     createdAt: serverTimestamp()
   });
   inp.value = "";
-  // Ẩn ô nhập sau khi gửi
   inp.parentElement.innerHTML = "";
 };
     });
-
-    // ✅ Hiện nút "Xem thêm"
-    // ✅ Hiện nút "Xem thêm (x)" với tổng số bình luận
 if (!document.getElementById(`more-comments-${postId}`)) {
   const moreBtn = document.createElement("button");
   moreBtn.className = "btn btn-sm btn-link";
@@ -656,7 +585,6 @@ if (!document.getElementById(`more-comments-${postId}`)) {
   moreBtn.onclick = () => window.location.href = `post.html?id=${postId}`;
   div.appendChild(moreBtn);
 
-  // Lấy tổng số bình luận để hiển thị
   const totalQuery = collection(db, "posts", postId, "comments");
   getCountFromServer(totalQuery).then((res) => {
     const total = res.data().count;
@@ -673,7 +601,7 @@ async function loadReplies(postId, commentId, parentElement, commentAuthor, post
 
   const q = query(
     collection(db, "posts", postId, "comments", commentId, "replies"),
-    orderBy("createdAt", "desc") // 👈 Mới nhất lên trên
+    orderBy("createdAt", "desc")
     
   );
 
@@ -683,7 +611,6 @@ async function loadReplies(postId, commentId, parentElement, commentAuthor, post
     snap.forEach((docSnap) => {
       const r = docSnap.data();
 
-      // Gửi thông báo nếu người khác phản hồi vào bình luận của bạn
       if (commentAuthor === currentUser.email && r.author !== currentUser.email) {
         const truncated = (postContent || "").slice(0, 30) + "...";
         const msg = `<a href="post.html?id=${postId}" class="text-decoration-none text-dark">
@@ -731,12 +658,11 @@ async function loadReplies(postId, commentId, parentElement, commentAuthor, post
         userAvatar.src = currentUser.avatar;
       }
     }
-    // Đổi avatar
   document.getElementById("changeAvatarInput").addEventListener("change", async (e) => {
   const file = e.target.files[0];
   if (!file) return;
 
-  const cloudUrl = await uploadToCloudinary(file); // ✅ gọi Cloudinary
+  const cloudUrl = await uploadToCloudinary(file); 
 
   currentUser.avatar = cloudUrl;
   localStorage.setItem("currentUser", JSON.stringify(currentUser));
@@ -745,15 +671,12 @@ async function loadReplies(postId, commentId, parentElement, commentAuthor, post
   alert("Đã cập nhật ảnh đại diện thành công!");
 });
 
-
-    // Đăng bài viết kèm ảnh
     document.getElementById("postForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       const content = document.getElementById("postContent").value.trim();
       const file = document.getElementById("postImageInput").files[0];
       let imageUrl = "";
       if (file) {
-        // Upload ảnh lên Cloudinary thay vì Firebase Storage
         imageUrl = await uploadToCloudinary(file);
       }
       await addDoc(collection(db, "posts"), {
@@ -802,9 +725,9 @@ async function loadReplies(postId, commentId, parentElement, commentAuthor, post
 
   const index = likes.indexOf(currentUser.email);
   if (index >= 0) {
-    likes.splice(index, 1); // Unlike
+    likes.splice(index, 1); 
   } else {
-    likes.push(currentUser.email); // Like
+    likes.push(currentUser.email); 
   }
 
   await updateDoc(postRef, { likes });
@@ -815,15 +738,15 @@ window.toggleLike = async function(postId) {
   const data = snap.data();
   let likes = data.likes || [];
 
-  const index = likes.indexOf(currentUser.email); // kiểm tra xem người dùng đã like chưa
+  const index = likes.indexOf(currentUser.email); 
 
   if (index >= 0) {
-    likes.splice(index, 1); // Nếu đã like rồi => bỏ like (unlike)
+    likes.splice(index, 1); 
   } else {
-    likes.push(currentUser.email); // Nếu chưa like => thêm vào danh sách like
+    likes.push(currentUser.email);
   }
 
-  await updateDoc(postRef, { likes }); // cập nhật lại trường likes
+  await updateDoc(postRef, { likes });
 };
 window.toggleCommentLike = async function(postId, commentId) {
   const commentRef = doc(db, "posts", postId, "comments", commentId);
@@ -852,7 +775,7 @@ window.toggleReplyLike = async function(postId, commentId, replyId) {
 async function uploadToCloudinary(file) {
   const formData = new FormData();
   formData.append("file", file);
-  formData.append("upload_preset", "unsigned_koobekaf"); // 👈 preset bạn vừa tạo
+  formData.append("upload_preset", "unsigned_koobekaf"); 
 
   const res = await fetch("https://api.cloudinary.com/v1_1/dkn9qkmxe/image/upload", {
     method: "POST",
@@ -875,11 +798,11 @@ window.addCommentImage = async (postId, input) => {
   await addDoc(collection(db, "posts", postId, "comments"), {
     author: currentUser.email,
     avatar: currentUser.avatar,
-    content: "", // không có text
+    content: "",
     imageUrl,
     createdAt: serverTimestamp()
   });
-  input.value = ""; // reset input
+  input.value = "";
 };
 const chatImageInput = document.getElementById("chatImageInput");
 
@@ -888,20 +811,17 @@ chatImageInput.addEventListener("change", async () => {
   if (!file) return;
 
   try {
-    // Upload ảnh lên Cloudinary
     const imageUrl = await uploadToCloudinary(file);
-
-    // Gửi tin nhắn chỉ có ảnh (không text)
     await addDoc(collection(db, "globalChat"), {
       user: currentUser.email,
       username: currentUser.username || currentUser.email,
       avatar: currentUser.avatar,
-      text: "",              // 👉 để trống text
-      imageUrl,              // 👉 lưu link ảnh
+      text: "",          
+      imageUrl,     
       createdAt: serverTimestamp()
     });
 
-    chatImageInput.value = ""; // reset sau khi gửi
+    chatImageInput.value = "";
   } catch (err) {
     alert("Lỗi gửi ảnh: " + err.message);
   }
@@ -911,13 +831,11 @@ chatImageInput.addEventListener("change", async () => {
 
 </script>
 
-<!-- Nút Đăng bài -->
 <button id="postButton" class="btn btn-primary" style="position: fixed; bottom: 20px; left: 20px; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(0,0,0,0.2); z-index: 1000;">
   ✍️
 </button>
 
 <script>
-  // Xử lý sự kiện bấm nút Đăng bài
   const postButton = document.getElementById("postButton");
   const postFormElement = document.getElementById("postForm");
   const cancelPost = document.getElementById("cancelPost");
@@ -943,7 +861,6 @@ function hideTooltip(el) {
 <script src="theme.js" defer></script>
 
 <script>
-  // Update username dynamically across pages
   window.addEventListener("storage", (e) => {
     if (e.key === "currentUser") {
       const updatedUser = JSON.parse(e.newValue || "{}");

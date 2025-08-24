@@ -272,7 +272,6 @@ const firebaseConfig = {
       const app = initializeApp(firebaseConfig);
       const auth = getAuth(app);
 
-      // Đăng ký
       document.getElementById("register").addEventListener("submit", (e) => {
         e.preventDefault();
         const email = document.getElementById("register-email").value;
@@ -281,9 +280,9 @@ const firebaseConfig = {
           .then((userCredential) => {
             alert("Đăng ký thành công!");
             localStorage.setItem("currentUser", JSON.stringify({
-  uid: userCredential.user.uid,      // lưu UID
-  email: userCredential.user.email,  // email
-  username: "",                      // nickname, để trống ban đầu
+  uid: userCredential.user.uid,   
+  email: userCredential.user.email, 
+  username: "",                    
   avatar: userCredential.user.photoURL || ""
 }));
 
@@ -292,7 +291,6 @@ const firebaseConfig = {
           .catch((error) => alert(error.message));
       });
 
-      // Đăng nhập
       document.getElementById("login").addEventListener("submit", (e) => {
         e.preventDefault();
         const email = document.getElementById("login-email").value;
@@ -301,9 +299,9 @@ const firebaseConfig = {
           .then((userCredential) => {
             alert("Đăng nhập thành công!");
             localStorage.setItem("currentUser", JSON.stringify({
-  uid: userCredential.user.uid,      // lưu UID
-  email: userCredential.user.email,  // email
-  username: "",                      // nickname, để trống ban đầu
+  uid: userCredential.user.uid,     
+  email: userCredential.user.email,
+  username: "",                     
   avatar: userCredential.user.photoURL || ""
 }));
 
@@ -312,7 +310,6 @@ const firebaseConfig = {
           .catch((error) => alert(error.message));
       });
 
-      // Google Login
       document
         .getElementById("google-login-btn")
         .addEventListener("click", () => {
@@ -324,7 +321,7 @@ const firebaseConfig = {
               localStorage.setItem("currentUser", JSON.stringify({
   uid: user.uid,
   email: user.email,
-  username: user.displayName || "",  // Google có sẵn displayName
+  username: user.displayName || "", 
   avatar: user.photoURL
 }));
 
@@ -335,7 +332,6 @@ const firebaseConfig = {
     </script>
 
     <script>
-      // Chuyển qua lại giữa form login/register
       const loginForm = document.getElementById("login");
       const registerForm = document.getElementById("register");
       const btn = document.getElementById("btn");

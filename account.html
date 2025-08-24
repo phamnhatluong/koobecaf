@@ -224,7 +224,6 @@
     if (uid) await updateDoc(doc(db, 'users', uid), { [field]: value });
   }
 
-  // Theme
   const body = document.body;
   if (localStorage.getItem('theme') === 'light') body.classList.add('light-mode');
   const updateThemeBtn = () => {
@@ -246,7 +245,6 @@
   if (currentUser.avatar) $('profileAvatar').src = currentUser.avatar;
   if (currentUser.background) $('coverPhoto').src = currentUser.background;
 
-  // Load Firestore data
   (async () => {
     if (!uid) return;
     const snap = await getDoc(doc(db, 'users', uid));
@@ -258,8 +256,6 @@
       setLS();
     }
   })();
-
-  // Nickname modal
   $('editNicknameBtn').onclick = () => {
     $('nicknameInput').value = currentUser.username || '';
     $('nicknameModal').style.display = 'flex';
@@ -273,7 +269,6 @@
     $('nicknameModal').style.display = 'none';
   };
 
-  // Avatar
   $('profileAvatar').onclick = () => $('avatarInput').click();
   $('avatarInput').onchange = async (e) => {
     const file = e.target.files?.[0];
@@ -289,7 +284,6 @@
     await saveUserField('avatar', data.secure_url);
   };
 
-  // Background
   $('coverPhoto').onclick = () => $('backgroundInput').click();
   $('backgroundInput').onchange = async (e) => {
     const file = e.target.files?.[0];
@@ -306,7 +300,6 @@
     alert('Cập nhật ảnh nền thành công!');
   };
 
-  // Tabs
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -318,7 +311,6 @@
     });
   });
 
-  // Posts
   const postList = $('postList');
   const qPosts = query(collection(db, 'posts'), orderBy('createdAt', 'desc'));
   onSnapshot(qPosts, (snap) => {

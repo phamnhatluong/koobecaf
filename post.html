@@ -36,7 +36,6 @@
         addDoc, serverTimestamp, updateDoc
       } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
 
-      // --- Firebase ---
       const firebaseConfig = {
         apiKey: "AIzaSyB1hj75YSToaR_RliGxoPAFyGXZVpFqTm4",
         authDomain: "we-are-always-here.firebaseapp.com",
@@ -49,13 +48,11 @@
       const app = initializeApp(firebaseConfig);
       const db = getFirestore(app);
 
-      // --- Lấy postId từ URL ---
       const params = new URLSearchParams(location.search);
       const postId = params.get("id");
       const postDiv = document.getElementById("postDetail");
       const commentList = document.getElementById("commentList");
 
-      // --- Lấy user từ localStorage, bắt buộc đăng nhập ---
       const rawUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
       const currentUser = {
         uid: rawUser.uid || null,
@@ -67,11 +64,9 @@
       };
 
       if (!currentUser.email) {
-        // Chưa đăng nhập → quay về login
         window.location.href = "login.html";
       }
 
-      // --- Đồng bộ username realtime (nếu có uid) ---
       if (currentUser.uid) {
         onSnapshot(doc(db, "users", currentUser.uid), (snap) => {
           if (snap.exists()) {
@@ -87,7 +82,6 @@
         });
       }
 
-      // --- Load bài viết ---
       async function loadPost() {
         if (!postId) {
           postDiv.innerHTML = "<div class='alert alert-danger'>Không tìm thấy bài viết!</div>";
@@ -112,7 +106,6 @@
         `;
       }
 
-      // --- Gửi bình luận bằng Enter ---
       document.getElementById("commentInput").addEventListener("keydown", async (e) => {
         if (e.key === "Enter") {
           const content = e.target.value.trim();
@@ -131,7 +124,6 @@
         }
       });
 
-      // --- Load danh sách bình luận + reply ---
       function loadComments() {
         const q = query(collection(db, "posts", postId, "comments"), orderBy("createdAt", "asc"));
         onSnapshot(q, (snap) => {
@@ -169,7 +161,6 @@
         });
       }
 
-      // --- Mở ô nhập reply ---
       window.showReplyBox = function (commentId) {
         const box = document.getElementById(`reply-box-${commentId}`);
         box.innerHTML = `
@@ -178,7 +169,6 @@
         `;
       };
 
-      // --- Gửi reply ---
       window.sendReply = async function (commentId, input) {
         const text = input.value.trim();
         if (!text) return;
@@ -195,7 +185,6 @@
         input.value = "";
       };
 
-      // --- Load replies theo comment ---
       function loadReplies(commentId) {
         const replyDiv = document.getElementById(`replies-${commentId}`);
         const q = query(collection(db, "posts", postId, "comments", commentId, "replies"), orderBy("createdAt", "asc"));
@@ -226,7 +215,6 @@
         });
       }
 
-      // --- Toggle like cho comment ---
       window.toggleCommentLike = async function (commentId) {
         const ref = doc(db, "posts", postId, "comments", commentId);
         const snap = await getDoc(ref);
@@ -242,7 +230,6 @@
         await updateDoc(ref, { likes });
       };
 
-      // --- Toggle like cho reply ---
       window.toggleReplyLike = async function (commentId, replyId) {
         const ref = doc(db, "posts", postId, "comments", commentId, "replies", replyId);
         const snap = await getDoc(ref);
@@ -258,7 +245,6 @@
         await updateDoc(ref, { likes });
       };
 
-      // --- Khởi chạy ---
       loadPost();
       loadComments();
     </script>

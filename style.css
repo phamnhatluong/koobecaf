@@ -842,3 +842,34 @@ body.light-mode .chat-box-footer .form-control {
     box-shadow: none;
     transition: border 0.2s;
 }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background-color: #18191a;
+    color: #e4e6eb;
+  }
+  .navbar {
+    background: linear-gradient(135deg, #23272f 60%, #18191a 100%);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, #a259ff 60%, #6a5cff 100%);
+    border: none;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  }
+  .btn-primary:hover {
+    background: linear-gradient(135deg, #6a5cff 60%, #a259ff 100%);
+  }
+  .chat-box {
+    background: #242526;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  }
+  .chat-box-header {
+    font-weight: 600;
+    color: #a259ff;
+  }
+  body.light-mode .chat-message.me .bubble {
+    margin-right: 0;
+    background-color: rgb(0, 255, 251) !important;
+    margin-left: auto;
+}
